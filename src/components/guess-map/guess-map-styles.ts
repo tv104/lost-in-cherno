@@ -16,7 +16,7 @@ export const globalStyles: ThemeUIStyleObject = {
     backgroundColor: "#222222 !important", // TODO: Use theme color
   },
 
-  ".leaflet-marker-icon:nth-child(1)": {
+  ".leaflet-marker-icon:nth-of-type(1)": {
     filter: "hue-rotate(-60deg)",
   },
 };
