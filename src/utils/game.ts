@@ -1,0 +1,5 @@
+export const GAME_CONFIG = {
+  ROUNDS_PER_GAME: 5,
+  SECONDS_PER_ROUND: 20,
+};
+
