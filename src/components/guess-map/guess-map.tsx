@@ -22,6 +22,7 @@ type Props = {
   onNext: () => void;
   currentRound: number;
   timeLeft: number;
+  isPlaying: boolean;
 };
 
 const getButtonText = (showAnswer: boolean, currentRound: number): string => {
@@ -42,6 +43,7 @@ const GuessMap: React.FC<Props> = ({
   onNext,
   currentRound,
   timeLeft,
+  isPlaying,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
@@ -102,7 +104,7 @@ const GuessMap: React.FC<Props> = ({
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
             <AddMarkerOnClick
               setLocation={setPlayerLocation}
-              disabled={showAnswer}
+              disabled={showAnswer || !isPlaying}
             />
             <FitBoundsOnAnswer
               showAnswer={showAnswer}
