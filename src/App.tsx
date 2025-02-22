@@ -49,7 +49,7 @@ const initialGameState: GameState = {
   timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
   playerLocation: null,
   gameResults: [],
-  screenshotLocation: getRandomLocation(locations, []), // preload first location
+  screenshotLocation: getRandomLocation(locations, []),
   roundEnded: false,
   panoramicImgReady: false,
 };
@@ -74,11 +74,11 @@ function App() {
   const handleTimeUpdate = (time: number) => {
     setGameState((prev) => ({ ...prev, timeLeft: time }));
     if (time === 0) {
-      handleSubmit();
+      handleRoundEnd();
     }
   };
 
-  const handleSubmit = () => {
+  const handleRoundEnd = () => {
     const distance = gameState.playerLocation
       ? calculateDistance(
           gameState.playerLocation,
@@ -100,7 +100,6 @@ function App() {
       roundEnded: true,
       gameResults: updatedGameResults,
     }));
-    console.log("gameState", gameState);
   };
 
   const handleNextRound = () => {
@@ -126,6 +125,12 @@ function App() {
   const handlePanoramicImgReady = () => {
     console.log("panoramic img ready");
     setGameState((prev) => ({ ...prev, panoramicImgReady: true }));
+  };
+
+  const handleSubmit = () => {
+    if (gameState.timeLeft > 0 && gameState.playerLocation) {
+      handleRoundEnd();
+    }
   };
 
   return (
@@ -158,6 +163,7 @@ function App() {
         showAnswer={gameState.timeLeft === 0 || gameState.roundEnded}
         onSubmit={handleSubmit}
         onNext={handleNextRound}
+        isPlaying={gameState.state === "playing"}
       />
       <PanoramicImg
         src={gameState.screenshotLocation.image}
