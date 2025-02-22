@@ -92,7 +92,7 @@ export const GuessMap: React.FC<Props> = ({
           <MapContainer
             center={[0, 0]}
             zoom={2}
-            minZoom={1}
+            minZoom={0}
             maxZoom={6}
             maxBounds={[
               [-90, -180],
@@ -101,6 +101,7 @@ export const GuessMap: React.FC<Props> = ({
             crs={L.CRS.EPSG3857}
             className="map"
             wheelPxPerZoomLevel={180}
+            maxBoundsViscosity={1.0}
           >
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
             <AddMarkerOnClick
@@ -126,7 +127,7 @@ export const GuessMap: React.FC<Props> = ({
             />
           )}
           <Button
-            variant="secondary"
+            variant="primary"
             sx={styles.button}
             onClick={showAnswer ? onNext : onSubmit}
           >

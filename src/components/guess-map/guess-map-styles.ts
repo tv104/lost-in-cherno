@@ -13,7 +13,7 @@ export const globalStyles: ThemeUIStyleObject = {
   ".leaflet-container": {
     height: "100vh",
     width: "100%",
-    backgroundColor: "#222222 !important", // TODO: Use theme color
+    backgroundColor: "#29331D !important", // TODO: Use theme color
   },
 
   ".leaflet-marker-icon:nth-of-type(1)": {
