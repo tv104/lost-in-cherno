@@ -32,12 +32,12 @@ const PanoramicImg: React.FC<Props> = ({ src, onReady }) => {
         navbar={false}
         hideNavbarButton={true}
         // TODO loading state
-        adapter={[
-          EquirectangularAdapter,
-          {
-            backgroundColor: "background",
-          },
-        ]}
+        // adapter={[
+        //   EquirectangularAdapter,
+        //   {
+        //     backgroundColor: "background",
+        //   },
+        // ]}
         onReady={onReady}
       />
     </Box>
