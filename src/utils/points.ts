@@ -16,7 +16,7 @@ export const calculateTotalScore = (results: { distance: number | null }[]): num
 };
 
 export const formatRoundResult = (distance: number | null): string => {
-  if (distance === null) return "Timed out (0 points)";
+  if (distance === null) return "Timed out";
   return `${Math.round(distance)} ${getRandomDistanceItem(distance)} away`;
 };
 
@@ -43,5 +43,5 @@ export const formatScoreMessage = (score: number): string => {
     return `New High Score! ${score}`;
   }
   
-  return `Final Score: ${score} (High Score: ${highScore})`;
+  return `Final Score: ${score} (Max: ${highScore})`;
 };

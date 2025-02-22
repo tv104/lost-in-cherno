@@ -135,16 +135,18 @@ function App() {
 
   return (
     <Box sx={styles.container}>
-      <MenuScreen
-        visible={gameState.state === "menu"}
-        onStartGame={onStartGame}
-        panoramicImgReady={gameState.panoramicImgReady}
-      />
-      <ResultsScreen
-        visible={gameState.state === "results"}
-        gameResults={gameState.gameResults}
-        onPlayAgain={onStartGame}
-      />
+      {gameState.state === "menu" && (
+        <MenuScreen
+          onStartGame={onStartGame}
+          panoramicImgReady={gameState.panoramicImgReady}
+        />
+      )}
+      {gameState.state === "results" && (
+        <ResultsScreen
+          gameResults={gameState.gameResults}
+          onPlayAgain={onStartGame}
+        />
+      )}
       <RoundManager
         timeLeft={gameState.timeLeft}
         onTimeUpdate={handleTimeUpdate}

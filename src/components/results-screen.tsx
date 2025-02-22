@@ -1,78 +1,52 @@
-import { ThemeUIStyleObject, Box, Button, Text } from "theme-ui";
+import { ThemeUIStyleObject, Button, Text, Box } from "theme-ui";
 import { RoundResult } from "../App";
-import { Footer } from "./footer";
+import Overlay from "./overlay";
 import {
   calculateTotalScore,
   formatRoundResult,
   formatScoreMessage,
 } from "../utils";
+import { useState, useMemo } from "react";
 
 type Props = {
-  visible: boolean;
   gameResults: RoundResult[];
   onPlayAgain: () => void;
 };
 
 const styles: Record<string, ThemeUIStyleObject> = {
-  container: {
-    backgroundColor: "background",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: "menu",
-    p: 4,
-  },
-  contentContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 4,
-    marginTop: "auto",
-    marginBottom: "auto",
-  },
-  score: {
-    fontSize: 4,
-    fontWeight: "bold",
-  },
   rounds: {
     display: "flex",
     flexDirection: "column",
     gap: 2,
   },
-  footer: {
-    marginTop: "auto",
-  },
 };
 
 export const ResultsScreen: React.FC<Props> = ({
-  visible,
   gameResults,
   onPlayAgain,
 }) => {
-  if (!visible) return null;
-
+  const [isFadingOut, setIsFadingOut] = useState(false);
   const finalScore = calculateTotalScore(gameResults);
+  const formattedResults = useMemo(
+    () =>
+      gameResults.map((result, index) => ({
+        round: index + 1,
+        result: formatRoundResult(result.distance),
+      })),
+    [gameResults]
+  );
 
   return (
-    <Box sx={styles.container}>
-      <Box sx={styles.contentContainer}>
-        <Text sx={styles.score}>{formatScoreMessage(finalScore)}</Text>
-        <Box sx={styles.rounds}>
-          {gameResults.map((result, index) => (
-            <Text key={index}>
-              Round {index + 1}: {formatRoundResult(result.distance)}
-            </Text>
-          ))}
-        </Box>
-        <Button onClick={onPlayAgain}>Play Again</Button>
+    <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onPlayAgain}>
+      <Text sx={styles.score}>{formatScoreMessage(finalScore)}</Text>
+      <Box sx={styles.rounds}>
+        {formattedResults.map(({ round, result }) => (
+          <Text key={round}>
+            Round {round}: {result}
+          </Text>
+        ))}
       </Box>
-      <Footer sx={styles.footer} />
-    </Box>
+      <Button onClick={() => setIsFadingOut(true)}>Play Again</Button>
+    </Overlay>
   );
 };
