@@ -1,6 +1,11 @@
 import { ThemeUIStyleObject, Box, Button, Text } from "theme-ui";
 import { RoundResult } from "../App";
 import { Footer } from "./footer";
+import {
+  calculateTotalScore,
+  formatRoundResult,
+  formatScoreMessage,
+} from "../utils";
 
 type Props = {
   visible: boolean;
@@ -52,18 +57,16 @@ export const ResultsScreen: React.FC<Props> = ({
 }) => {
   if (!visible) return null;
 
-  console.log(gameResults);
+  const finalScore = calculateTotalScore(gameResults);
 
   return (
     <Box sx={styles.container}>
       <Box sx={styles.contentContainer}>
+        <Text sx={styles.score}>{formatScoreMessage(finalScore)}</Text>
         <Box sx={styles.rounds}>
           {gameResults.map((result, index) => (
             <Text key={index}>
-              Round {index + 1}:{" "}
-              {result.distance !== null
-                ? `${Math.round(result.distance)}m`
-                : "Timed out"}
+              Round {index + 1}: {formatRoundResult(result.distance)}
             </Text>
           ))}
         </Box>
