@@ -2,7 +2,6 @@ import { ThemeUIStyleObject } from "theme-ui";
 import { Text } from "theme-ui";
 import { LatLngTuple } from "leaflet";
 import { calculateDistance, getRandomDistanceItem } from "../../utils";
-import { BUTTON_HEIGHT, GAP } from "./guess-map-styles";
 
 type GuessMapResultProps = {
   playerLocation: LatLngTuple | null;
@@ -24,7 +23,7 @@ const getResultMessage = (
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
     position: "absolute",
-    bottom: BUTTON_HEIGHT + GAP + 48,
+    top: "352px",
     left: 0,
     right: 0,
     color: "white",

@@ -31,7 +31,7 @@ export const FitBoundsOnAnswer = ({
   useEffect(() => {
     if (showAnswer && location && playerLocation) {
       map.fitBounds([location, playerLocation], {
-        padding: [100, 100],
+        padding: [120, 120],
         duration: 1,
       });
     } else if (showAnswer && location) {

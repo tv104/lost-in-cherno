@@ -100,6 +100,7 @@ const GuessMap: React.FC<Props> = ({
             ]}
             crs={L.CRS.EPSG3857}
             className="map"
+            wheelPxPerZoomLevel={180}
           >
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
             <AddMarkerOnClick
