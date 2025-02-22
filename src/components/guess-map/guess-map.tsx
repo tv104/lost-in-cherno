@@ -27,8 +27,8 @@ type Props = {
 const getButtonText = (showAnswer: boolean, currentRound: number): string => {
   if (showAnswer) {
     return currentRound >= GAME_CONFIG.ROUNDS_PER_GAME
-      ? "Show results"
-      : "Start next round";
+      ? "Results"
+      : "Next round";
   }
   return "Guess";
 };
@@ -83,6 +83,7 @@ const GuessMap: React.FC<Props> = ({
         <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <GuessMapInfo
             currentRound={currentRound}
+            maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
             timeLeft={timeLeft}
             showAnswer={showAnswer}
           />

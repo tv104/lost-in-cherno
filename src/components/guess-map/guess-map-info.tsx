@@ -6,6 +6,7 @@ type GuessMapInfoProps = {
   currentRound: number;
   timeLeft: number;
   showAnswer: boolean;
+  maxRounds: number;
 };
 
 const PULSE = {
@@ -60,10 +61,13 @@ export const GuessMapInfo: React.FC<GuessMapInfoProps> = ({
   currentRound,
   timeLeft,
   showAnswer,
+  maxRounds,
 }) => {
   return (
     <Box sx={styles.info}>
-      <Text>Round {currentRound}/5</Text>
+      <Text>
+        Round {currentRound}/{maxRounds}
+      </Text>
       <Text>
         Time left:{" "}
         <Text

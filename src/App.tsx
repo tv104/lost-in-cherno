@@ -1,4 +1,7 @@
-import { locations, LocationConfig } from "./locations/chernarus/config";
+import {
+  locations,
+  ScreenshotLocationConfig,
+} from "./locations/chernarus/config";
 import AudioPlayer from "./components/audio-player";
 import GuessMap from "./components/guess-map/guess-map";
 import PanoramicImg from "./components/panoramic-img";
@@ -7,7 +10,12 @@ import { Box } from "theme-ui";
 import { LatLngTuple } from "leaflet";
 import { useState } from "react";
 import MenuScreen from "./components/menu-screen";
-import { calculateDistance, GAME_CONFIG, getRandomLocation } from "./utils";
+import {
+  calculateDistance,
+  GAME_CONFIG,
+  getRandomLocation,
+  saveRoundLocation,
+} from "./utils";
 import { RoundManager } from "./components/round-manager";
 import { ResultsScreen } from "./components/results-screen";
 
@@ -19,10 +27,9 @@ const styles: Record<string, ThemeUIStyleObject> = {
   },
 };
 
-export type GuessedLocation = {
-  location: LatLngTuple;
-  distance: number;
+export type RoundResult = {
   locationId: string;
+  distance: number | null;
 };
 
 type GameState = {
@@ -30,28 +37,28 @@ type GameState = {
   currentRound: number;
   timeLeft: number;
   playerLocation: LatLngTuple | null;
-  guessedLocations: GuessedLocation[];
-  currentLocation: LocationConfig;
-  hasSubmitted: boolean;
+  gameResults: RoundResult[];
+  screenshotLocation: ScreenshotLocationConfig;
+  roundEnded: boolean;
   panoramicImgReady: boolean;
 };
 
 const initialGameState: GameState = {
   state: "menu",
   currentRound: 1,
-  timeLeft: 20,
+  timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
   playerLocation: null,
-  guessedLocations: [],
-  currentLocation: getRandomLocation(locations, []), // preload first location
-  hasSubmitted: false,
+  gameResults: [],
+  screenshotLocation: getRandomLocation(locations, []), // preload first location
+  roundEnded: false,
   panoramicImgReady: false,
 };
 
 function App() {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
 
-  const getCurrentRoundLocationIds = () =>
-    gameState.guessedLocations.map((g) => g.locationId);
+  const getcurrentGameLocationIds = () =>
+    gameState.gameResults.map((r) => r.locationId);
 
   const setPlayerLocation = (location: LatLngTuple) => {
     setGameState({ ...gameState, playerLocation: location });
@@ -66,30 +73,34 @@ function App() {
 
   const handleTimeUpdate = (time: number) => {
     setGameState((prev) => ({ ...prev, timeLeft: time }));
+    if (time === 0) {
+      handleSubmit();
+    }
   };
 
-  const handleSubmitGuess = () => {
-    if (!gameState.playerLocation) return;
+  const handleSubmit = () => {
+    const distance = gameState.playerLocation
+      ? calculateDistance(
+          gameState.playerLocation,
+          gameState.screenshotLocation.location
+        )
+      : null;
 
-    const distance = calculateDistance(
-      gameState.playerLocation,
-      gameState.currentLocation.location
-    );
-
-    const newGuessedLocations = [
-      ...gameState.guessedLocations,
+    const updatedGameResults: RoundResult[] = [
+      ...gameState.gameResults,
       {
-        location: gameState.playerLocation,
+        locationId: gameState.screenshotLocation.id,
         distance,
-        locationId: gameState.currentLocation.id,
       },
     ];
 
+    saveRoundLocation(gameState.screenshotLocation.id);
     setGameState((prev) => ({
       ...prev,
-      hasSubmitted: true,
-      guessedLocations: newGuessedLocations,
+      roundEnded: true,
+      gameResults: updatedGameResults,
     }));
+    console.log("gameState", gameState);
   };
 
   const handleNextRound = () => {
@@ -98,27 +109,18 @@ function App() {
       return;
     }
 
-    const currentRoundLocationIds = getCurrentRoundLocationIds();
-    const randomLocation = getRandomLocation(
-      locations,
-      currentRoundLocationIds
-    );
+    const currentGameLocationIds = getcurrentGameLocationIds();
+    const randomLocation = getRandomLocation(locations, currentGameLocationIds);
 
     setGameState((prev) => ({
       ...prev,
       currentRound: prev.currentRound + 1,
       timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
       playerLocation: null,
-      hasSubmitted: false,
-      currentLocation: randomLocation,
+      roundEnded: false,
+      screenshotLocation: randomLocation,
       panoramicImgReady: false,
     }));
-  };
-
-  const handleTimeUp = () => {
-    if (!gameState.hasSubmitted) {
-      handleSubmitGuess();
-    }
   };
 
   const handlePanoramicImgReady = () => {
@@ -135,16 +137,15 @@ function App() {
       />
       <ResultsScreen
         visible={gameState.state === "results"}
-        guessedLocations={gameState.guessedLocations}
+        gameResults={gameState.gameResults}
         onPlayAgain={onStartGame}
       />
       <RoundManager
         timeLeft={gameState.timeLeft}
         onTimeUpdate={handleTimeUpdate}
-        onTimeUp={handleTimeUp}
         isPlaying={
           gameState.state === "playing" &&
-          !gameState.hasSubmitted &&
+          !gameState.roundEnded &&
           gameState.timeLeft > 0
         }
       />
@@ -153,13 +154,13 @@ function App() {
         timeLeft={gameState.timeLeft}
         playerLocation={gameState.playerLocation}
         setPlayerLocation={setPlayerLocation}
-        location={gameState.currentLocation.location}
-        showAnswer={gameState.timeLeft === 0 || gameState.hasSubmitted}
-        onSubmit={handleSubmitGuess}
+        location={gameState.screenshotLocation.location}
+        showAnswer={gameState.timeLeft === 0 || gameState.roundEnded}
+        onSubmit={handleSubmit}
         onNext={handleNextRound}
       />
       <PanoramicImg
-        src={gameState.currentLocation.image}
+        src={gameState.screenshotLocation.image}
         onReady={handlePanoramicImgReady}
       />
       <AudioPlayer />

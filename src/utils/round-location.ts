@@ -1,4 +1,4 @@
-import { LocationConfig } from "../locations/chernarus/config";
+import { ScreenshotLocationConfig } from "../locations/chernarus/config";
 
 const STORAGE_KEY = "guessed_locations_history";
 const MAX_HISTORY_SIZE = 100;
@@ -13,7 +13,7 @@ export function loadGuessedLocations(): string[] {
   }
 }
 
-export function saveGuessedLocation(locationId: string): void {
+export function saveRoundLocation(locationId: string): void {
   try {
     const history = loadGuessedLocations();
     const updatedHistory = [locationId, ...history].slice(0, MAX_HISTORY_SIZE);
@@ -24,9 +24,9 @@ export function saveGuessedLocation(locationId: string): void {
 }
 
 export function getRandomLocation(
-  locations: LocationConfig[],
+  locations: ScreenshotLocationConfig[],
   excludeIds: string[] = []
-): LocationConfig {
+): ScreenshotLocationConfig {
   const historicalLocations = loadGuessedLocations();
   const allExcludedIds = new Set([...excludeIds, ...historicalLocations]);
   
@@ -42,8 +42,6 @@ export function getRandomLocation(
   const randomLocation = candidateLocations[
     Math.floor(Math.random() * candidateLocations.length)
   ];
-  
-  saveGuessedLocation(randomLocation.id);
-  
+    
   return randomLocation;
 }

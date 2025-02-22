@@ -1,10 +1,10 @@
 import { ThemeUIStyleObject, Box, Button, Text } from "theme-ui";
-import { GuessedLocation } from "../App";
+import { RoundResult } from "../App";
 import { Footer } from "./footer";
 
 type Props = {
   visible: boolean;
-  guessedLocations: GuessedLocation[];
+  gameResults: RoundResult[];
   onPlayAgain: () => void;
 };
 
@@ -47,25 +47,23 @@ const styles: Record<string, ThemeUIStyleObject> = {
 
 export const ResultsScreen: React.FC<Props> = ({
   visible,
-  guessedLocations,
+  gameResults,
   onPlayAgain,
 }) => {
   if (!visible) return null;
 
-  const totalScore = guessedLocations.reduce(
-    (acc, curr) => acc + curr.distance,
-    0
-  );
-  const averageScore = Math.round(totalScore / guessedLocations.length);
+  console.log(gameResults);
 
   return (
     <Box sx={styles.container}>
       <Box sx={styles.contentContainer}>
-        <Text sx={styles.score}>Average distance: {averageScore}m</Text>
         <Box sx={styles.rounds}>
-          {guessedLocations.map((guess, index) => (
+          {gameResults.map((result, index) => (
             <Text key={index}>
-              Round {index + 1}: {Math.round(guess.distance)}m
+              Round {index + 1}:{" "}
+              {result.distance !== null
+                ? `${Math.round(result.distance)}m`
+                : "Timed out"}
             </Text>
           ))}
         </Box>

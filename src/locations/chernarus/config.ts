@@ -23,13 +23,13 @@ import image32 from './panoramas/32.webp' // nice rooftop
 import image33 from './panoramas/33.webp'
 import { LatLngTuple } from 'leaflet'
 
-export type LocationConfig = {
+export type ScreenshotLocationConfig = {
     id: string;
     image: string;
     location: LatLngTuple;
 }
 
-export const locations: LocationConfig[] = [
+export const locations: ScreenshotLocationConfig[] = [
     { id: "1", image: image1, location: [0, 0] },
     { id: "6", image: image6, location: [0, 0] },
     { id: "7", image: image7, location: [0, 0] },
