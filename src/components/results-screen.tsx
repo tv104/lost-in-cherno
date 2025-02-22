@@ -1,6 +1,6 @@
 import { ThemeUIStyleObject, Button, Text, Box } from "theme-ui";
 import { RoundResult } from "../App";
-import Overlay from "./overlay";
+import { Overlay } from "./overlay";
 import {
   calculateTotalScore,
   formatRoundResult,

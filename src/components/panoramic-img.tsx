@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
-import { EquirectangularAdapter } from "@photo-sphere-viewer/core";
+// import { EquirectangularAdapter } from "@photo-sphere-viewer/core";
 import { Box, ThemeUIStyleObject } from "theme-ui";
 
 const styles: Record<string, ThemeUIStyleObject> = {
@@ -20,7 +20,7 @@ type Props = {
   onReady: () => void;
 };
 
-const PanoramicImg: React.FC<Props> = ({ src, onReady }) => {
+export const PanoramicImg: React.FC<Props> = ({ src, onReady }) => {
   return (
     <Box sx={styles.container}>
       <ReactPhotoSphereViewer
@@ -43,5 +43,3 @@ const PanoramicImg: React.FC<Props> = ({ src, onReady }) => {
     </Box>
   );
 };
-
-export default PanoramicImg;

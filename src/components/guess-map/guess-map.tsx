@@ -34,7 +34,7 @@ const getButtonText = (showAnswer: boolean, currentRound: number): string => {
   return "Guess";
 };
 
-const GuessMap: React.FC<Props> = ({
+export const GuessMap: React.FC<Props> = ({
   playerLocation,
   setPlayerLocation,
   location,
@@ -137,5 +137,3 @@ const GuessMap: React.FC<Props> = ({
     </>
   );
 };
-
-export default GuessMap;

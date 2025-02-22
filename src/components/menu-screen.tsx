@@ -1,5 +1,5 @@
 import { Button, Text, Heading } from "theme-ui";
-import Overlay from "./overlay";
+import { Overlay } from "./overlay";
 import { useState } from "react";
 
 type Props = {
@@ -7,7 +7,10 @@ type Props = {
   panoramicImgReady: boolean;
 };
 
-const MenuScreen: React.FC<Props> = ({ onStartGame, panoramicImgReady }) => {
+export const MenuScreen: React.FC<Props> = ({
+  onStartGame,
+  panoramicImgReady,
+}) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   return (
     <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onStartGame}>
@@ -22,5 +25,3 @@ const MenuScreen: React.FC<Props> = ({ onStartGame, panoramicImgReady }) => {
     </Overlay>
   );
 };
-
-export default MenuScreen;

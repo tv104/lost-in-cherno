@@ -1,6 +1,6 @@
 import { ThemeUIStyleObject, Box } from "theme-ui";
 import { Footer } from "./footer";
-import Logo from "./logo";
+import { Logo } from "./logo";
 
 type Props = {
   children: React.ReactNode;
@@ -44,7 +44,7 @@ const styles: Record<string, ThemeUIStyleObject> = {
   },
 };
 
-const Overlay: React.FC<Props> = ({
+export const Overlay: React.FC<Props> = ({
   children,
   isFadingOut,
   onFadeOutComplete,
@@ -72,5 +72,3 @@ const Overlay: React.FC<Props> = ({
     </Box>
   );
 };
-
-export default Overlay;

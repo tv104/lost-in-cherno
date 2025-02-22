@@ -3,13 +3,13 @@ import {
   ScreenshotLocationConfig,
 } from "./locations/chernarus/config";
 import AudioPlayer from "./components/audio-player";
-import GuessMap from "./components/guess-map/guess-map";
-import PanoramicImg from "./components/panoramic-img";
+import { GuessMap } from "./components/guess-map/guess-map";
+import { PanoramicImg } from "./components/panoramic-img";
 import { ThemeUIStyleObject } from "theme-ui";
 import { Box } from "theme-ui";
 import { LatLngTuple } from "leaflet";
 import { useState } from "react";
-import MenuScreen from "./components/menu-screen";
+import { MenuScreen } from "./components/menu-screen";
 import {
   calculateDistance,
   GAME_CONFIG,

@@ -5,7 +5,7 @@ type Props = {
   sx?: ThemeUIStyleObject;
 };
 
-const Logo: React.FC<Props> = ({ sx }) => {
+export const Logo: React.FC<Props> = ({ sx }) => {
   const styles: Record<string, ThemeUIStyleObject> = {
     logo: {
       width: "100%",
@@ -18,5 +18,3 @@ const Logo: React.FC<Props> = ({ sx }) => {
 
   return <Image src={logo} alt="Lost in Cherno logo" sx={styles.logo} />;
 };
-
-export default Logo;
