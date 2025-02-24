@@ -31,7 +31,7 @@ export const FitBoundsOnAnswer = ({
   useEffect(() => {
     if (showAnswer && panoramaLocation && guessLocation) {
       map.fitBounds([panoramaLocation, guessLocation], {
-        padding: [120, 120],
+        padding: [80, 80],
         duration: 1,
       });
     } else if (showAnswer && panoramaLocation) {
@@ -45,15 +45,17 @@ export const FitBoundsOnAnswer = ({
   return null;
 };
 
-export const ZoomOutOnNewRound = ({
-  currentRound,
+export const ZoomOutOnTransition = ({
+  transitioning,
 }: {
-  currentRound: number;
+  transitioning: boolean;
 }) => {
   const map = useMap();
   useEffect(() => {
-    map.setZoom(1);
-  }, [currentRound, map]);
+    if (transitioning) {
+      map.setZoom(1, { animate: true });
+    }
+  }, [transitioning, map]);
 
   return null;
 };

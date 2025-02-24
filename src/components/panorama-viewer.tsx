@@ -9,6 +9,8 @@ type Props = {
   onCurrentReady: () => void;
   onNextReady: () => void;
   roundActive: boolean;
+  isTransitioningRound: boolean;
+  onTransitionEnd: () => void;
 };
 
 export const PanoramaViewer: React.FC<Props> = ({
@@ -17,6 +19,8 @@ export const PanoramaViewer: React.FC<Props> = ({
   onCurrentReady,
   onNextReady,
   roundActive,
+  isTransitioningRound,
+  onTransitionEnd,
 }) => {
   const commonProps = {
     height: "100vh",
@@ -24,13 +28,6 @@ export const PanoramaViewer: React.FC<Props> = ({
     // littlePlanet: true,
     navbar: false,
     hideNavbarButton: true,
-    // TODO loading state
-    // adapter={[
-    //   EquirectangularAdapter,
-    //   {
-    //     backgroundColor: "background",
-    //   },
-    // ]}
   };
 
   const styles: Record<string, ThemeUIStyleObject> = {
@@ -41,34 +38,54 @@ export const PanoramaViewer: React.FC<Props> = ({
       right: 0,
       bottom: 0,
       zIndex: "panorama",
-      filter: roundActive ? "none" : "grayscale(0.5)",
-      transition: "filter 0.15s linear",
-
-      ".current-pano-img": {
-        opacity: 1,
-      },
-      ".next-pano-img": {
-        opacity: 0,
-      },
+      filter: roundActive ? "none" : "grayscale(0.65)",
+      transition: "filter 0.2s linear",
+    },
+    panoramaImage: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      transition: "filter 0.5s ease-in",
+    },
+    currentImage: {
+      zIndex: 1,
+      filter: isTransitioningRound ? "opacity(0)" : "opacity(1)",
+    },
+    nextImage: {
+      zIndex: 0,
+      opacity: 1,
     },
   };
 
   return (
     <Box sx={styles.container}>
-      <ReactPhotoSphereViewer
-        {...commonProps}
+      <Box
+        sx={{ ...styles.panoramaImage, ...styles.currentImage }}
         key={src.toString()}
-        src={src}
-        containerClass="current-pano-img"
-        onReady={onCurrentReady}
-      />
-      <ReactPhotoSphereViewer
-        {...commonProps}
+        onTransitionEnd={onTransitionEnd}
+      >
+        <ReactPhotoSphereViewer
+          {...commonProps}
+          key={src.toString()}
+          src={src}
+          containerClass="current-pano-img"
+          onReady={onCurrentReady}
+        />
+      </Box>
+      <Box
+        sx={{ ...styles.panoramaImage, ...styles.nextImage }}
         key={preloadSrc.toString()}
-        src={preloadSrc}
-        onReady={onNextReady}
-        containerClass="next-pano-img"
-      />
+      >
+        <ReactPhotoSphereViewer
+          {...commonProps}
+          key={preloadSrc.toString()}
+          src={preloadSrc}
+          containerClass="next-pano-img"
+          onReady={onNextReady}
+        />
+      </Box>
     </Box>
   );
 };

@@ -47,6 +47,7 @@ type RoundState = {
   timeLeft: number;
   currentRoundReady: boolean;
   nextRoundReady: boolean;
+  isTransitioningRound: boolean;
 };
 
 const initialGameState: GameState = {
@@ -63,6 +64,7 @@ const initialRoundState: RoundState = {
   timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
   currentRoundReady: false,
   nextRoundReady: false,
+  isTransitioningRound: false,
 };
 
 function App() {
@@ -77,9 +79,10 @@ function App() {
     timeLeft,
     currentRoundReady,
     nextRoundReady,
+    isTransitioningRound,
   } = roundState;
 
-  const onStartGame = () => {
+  const handleStartGame = () => {
     setGameState(
       (prev): GameState => ({
         ...prev,
@@ -93,6 +96,7 @@ function App() {
       (): RoundState => ({
         ...initialRoundState,
         roundActive: true,
+        isTransitioningRound: false,
       })
     );
   };
@@ -114,18 +118,14 @@ function App() {
 
   const handleMapButtonClick = () => {
     if (roundActive && guessLocation) {
-      console.log("handleRoundEnd");
       handleRoundEnd();
-    } else if (!roundActive && currentRound < GAME_CONFIG.ROUNDS_PER_GAME) {
-      console.log("handleNextRound");
-      handleNextRound();
-    } else if (!roundActive && currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
-      console.log("handleGameEnd");
-      handleGameEnd();
-    } else {
-      console.log("handleMapButtonClick");
+    } else if (!roundActive) {
+      if (currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
+        handleGameEnd();
+      } else {
+        handleTransitionToNextRound();
+      }
     }
-    // TODO error logging - we should never get here
   };
 
   const handleCurrentPanoramicImgReady = () => {
@@ -142,7 +142,23 @@ function App() {
     }
   };
 
-  const handleNextRound = () => {
+  const handleTransitionToNextRound = () => {
+    setGameState(
+      (prev): GameState => ({
+        ...prev,
+        currentRound: prev.currentRound + 1,
+      })
+    );
+
+    setRoundState(
+      (): RoundState => ({
+        ...initialRoundState,
+        isTransitioningRound: true,
+      })
+    );
+  };
+
+  const handleStartRound = () => {
     assertNotNull(nextPanorama, "nextPanorama");
     const newCurrentPanorama = nextPanorama;
     const newNextPanorama = getAvailablePanorama(panoramas, [
@@ -152,7 +168,6 @@ function App() {
     setGameState(
       (prev): GameState => ({
         ...prev,
-        currentRound: prev.currentRound + 1,
         currentPanorama: newCurrentPanorama,
         nextPanorama: newNextPanorama,
       })
@@ -162,6 +177,7 @@ function App() {
       (): RoundState => ({
         ...initialRoundState,
         roundActive: true,
+        isTransitioningRound: false,
       })
     );
   };
@@ -242,19 +258,25 @@ function App() {
     );
   }, [timeLeft, guessLocation, roundActive, nextRoundReady]);
 
+  const handlePanoramaTransitionEnd = () => {
+    if (isTransitioningRound) {
+      handleStartRound();
+    }
+  };
+
   return (
     <Box sx={styles.container}>
       {phase === "menu" && (
         <MenuScreen
           disableStartButton={!currentRoundReady}
-          onStartGame={onStartGame}
+          onStartGame={handleStartGame}
         />
       )}
       {phase === "results" && (
         <ResultsScreen
           disableStartButton={!currentRoundReady}
           gameResults={gameResults}
-          onStartGame={onStartGame}
+          onStartGame={handleStartGame}
         />
       )}
       <GuessMap
@@ -263,10 +285,11 @@ function App() {
         guessLocation={guessLocation}
         setGuessLocation={handleSetGuessLocation}
         panoramaLocation={currentPanorama.location}
-        showAnswer={!roundActive && phase === "game"}
+        showAnswer={phase === "game" && !roundActive && !isTransitioningRound}
         onMapButtonClick={handleMapButtonClick}
         mapButtonDisabled={disableMapButton}
         isPlaying={phase === "game"}
+        isTransitioningRound={isTransitioningRound}
       />
       <PanoramaViewer
         src={currentPanorama.image}
@@ -274,6 +297,8 @@ function App() {
         onCurrentReady={handleCurrentPanoramicImgReady}
         onNextReady={handleNextPanoramicImgReady}
         roundActive={roundActive}
+        isTransitioningRound={isTransitioningRound}
+        onTransitionEnd={handlePanoramaTransitionEnd}
       />
       <AudioPlayer />
     </Box>

@@ -6,9 +6,9 @@ import { GAME_CONFIG } from "../../utils";
 import { createStyles, globalStyles } from "./guess-map-styles";
 import {
   AddMarkerOnClick,
-  ZoomOutOnNewRound,
+  ZoomOutOnTransition,
   FitBoundsOnAnswer,
-} from "./guess-map-components";
+} from "./guess-map-helpers";
 import { GuessMapInfo } from "./guess-map-info";
 import { GuessMapResult } from "./guess-map-result";
 import L from "leaflet";
@@ -29,6 +29,7 @@ type Props = {
   currentRound: number;
   timeLeft: number;
   isPlaying: boolean;
+  isTransitioningRound: boolean;
 };
 
 export const GuessMap: React.FC<Props> = ({
@@ -41,6 +42,7 @@ export const GuessMap: React.FC<Props> = ({
   currentRound,
   timeLeft,
   isPlaying,
+  isTransitioningRound,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
@@ -88,7 +90,7 @@ export const GuessMap: React.FC<Props> = ({
           />
           <MapContainer
             center={[0, 0]}
-            zoom={2}
+            zoom={1}
             minZoom={0}
             maxZoom={6}
             maxBounds={MAX_MAP_BOUNDS}
@@ -100,14 +102,14 @@ export const GuessMap: React.FC<Props> = ({
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
             <AddMarkerOnClick
               setLocation={setGuessLocation}
-              disabled={showAnswer || !isPlaying}
+              disabled={showAnswer || !isPlaying || isTransitioningRound}
             />
             <FitBoundsOnAnswer
               showAnswer={showAnswer}
               panoramaLocation={panoramaLocation}
               guessLocation={guessLocation}
             />
-            <ZoomOutOnNewRound currentRound={currentRound} />
+            <ZoomOutOnTransition transitioning={isTransitioningRound} />
             {showAnswer && panoramaLocation && (
               <Marker position={panoramaLocation} />
             )}
