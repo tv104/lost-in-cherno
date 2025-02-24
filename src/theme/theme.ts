@@ -29,7 +29,13 @@ export const theme: Theme = {
       },
       '&:active': {
         filter: 'brightness(0.85) opacity(1)',
-      }
+      },
+      '&:disabled': {
+        '&, &:hover, &:active': {
+          filter: 'opacity(0.75)',
+          cursor: 'not-allowed',
+        },
+      },
     },
     primary: {
       variant: 'buttons.base',

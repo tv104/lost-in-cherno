@@ -4,19 +4,21 @@ import { LatLngTuple } from "leaflet";
 import { calculateDistance, getRandomDistanceItem } from "../../utils";
 
 type GuessMapResultProps = {
-  playerLocation: LatLngTuple | null;
-  location: LatLngTuple;
+  guessLocation: LatLngTuple | null;
+  panoramaLocation: LatLngTuple;
 };
 
 const getResultMessage = (
-  playerLocation: LatLngTuple | null,
-  location: LatLngTuple
+  guessLocation: LatLngTuple | null,
+  panoramaLocation: LatLngTuple
 ) => {
-  if (!playerLocation) {
+  if (!guessLocation) {
     return `You are dead`;
   }
 
-  const distance = Math.round(calculateDistance(playerLocation, location));
+  const distance = Math.round(
+    calculateDistance(guessLocation, panoramaLocation)
+  );
   return `${distance} ${getRandomDistanceItem(distance)} away`;
 };
 
@@ -37,10 +39,10 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 export const GuessMapResult: React.FC<GuessMapResultProps> = ({
-  playerLocation,
-  location,
+  guessLocation,
+  panoramaLocation,
 }) => (
   <Text sx={styles.container}>
-    {getResultMessage(playerLocation, location)}
+    {getResultMessage(guessLocation, panoramaLocation)}
   </Text>
 );

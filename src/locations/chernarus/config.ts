@@ -21,15 +21,9 @@ import image27 from './panoramas/27.webp' // long road in forest with mil
 import image28 from './panoramas/28.webp'
 import image32 from './panoramas/32.webp' // nice rooftop
 import image33 from './panoramas/33.webp'
-import { LatLngTuple } from 'leaflet'
+import { PanoramaConfig } from '../../utils/round-panoramas'
 
-export type ScreenshotLocationConfig = {
-    id: string;
-    image: string;
-    location: LatLngTuple;
-}
-
-export const locations: ScreenshotLocationConfig[] = [
+export const panoramas: PanoramaConfig[] = [
     { id: "1", image: image1, location: [0, 0] },
     { id: "6", image: image6, location: [0, 0] },
     { id: "7", image: image7, location: [0, 0] },

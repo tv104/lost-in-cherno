@@ -1,22 +1,20 @@
-import {
-  locations,
-  ScreenshotLocationConfig,
-} from "./locations/chernarus/config";
+import { panoramas } from "./locations/chernarus/config";
 import AudioPlayer from "./components/audio-player";
 import { GuessMap } from "./components/guess-map/guess-map";
-import { PanoramicImg } from "./components/panoramic-img";
+import { PanoramaViewer } from "./components/panorama-viewer";
 import { ThemeUIStyleObject } from "theme-ui";
 import { Box } from "theme-ui";
 import { LatLngTuple } from "leaflet";
-import { useState } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { MenuScreen } from "./components/menu-screen";
 import {
   calculateDistance,
   GAME_CONFIG,
-  getRandomLocation,
+  getAvailablePanorama,
   saveRoundLocation,
+  assertNotNull,
+  PanoramaConfig,
 } from "./utils";
-import { RoundManager } from "./components/round-manager";
 import { ResultsScreen } from "./components/results-screen";
 
 const styles: Record<string, ThemeUIStyleObject> = {
@@ -30,146 +28,250 @@ const styles: Record<string, ThemeUIStyleObject> = {
 export type RoundResult = {
   locationId: string;
   distance: number | null;
+  timeLeft: number;
 };
 
+// updates every round
 type GameState = {
-  state: "menu" | "playing" | "results";
   currentRound: number;
-  timeLeft: number;
-  playerLocation: LatLngTuple | null;
   gameResults: RoundResult[];
-  screenshotLocation: ScreenshotLocationConfig;
-  roundEnded: boolean;
-  panoramicImgReady: boolean;
+  phase: "menu" | "game" | "results";
+  currentPanorama: PanoramaConfig;
+  nextPanorama: PanoramaConfig | null;
+};
+
+// updates within a round
+type RoundState = {
+  guessLocation: LatLngTuple | null;
+  roundActive: boolean;
+  timeLeft: number;
+  currentRoundReady: boolean;
+  nextRoundReady: boolean;
 };
 
 const initialGameState: GameState = {
-  state: "menu",
   currentRound: 1,
-  timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
-  playerLocation: null,
   gameResults: [],
-  screenshotLocation: getRandomLocation(locations, []),
-  roundEnded: false,
-  panoramicImgReady: false,
+  phase: "menu",
+  currentPanorama: getAvailablePanorama(panoramas, []),
+  nextPanorama: null,
+};
+
+const initialRoundState: RoundState = {
+  guessLocation: null,
+  roundActive: false,
+  timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
+  currentRoundReady: false,
+  nextRoundReady: false,
 };
 
 function App() {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
+  const [roundState, setRoundState] = useState<RoundState>(initialRoundState);
 
-  const getcurrentGameLocationIds = () =>
-    gameState.gameResults.map((r) => r.locationId);
-
-  const setPlayerLocation = (location: LatLngTuple) => {
-    setGameState({ ...gameState, playerLocation: location });
-  };
+  const { currentRound, gameResults, phase, currentPanorama, nextPanorama } =
+    gameState;
+  const {
+    guessLocation,
+    roundActive,
+    timeLeft,
+    currentRoundReady,
+    nextRoundReady,
+  } = roundState;
 
   const onStartGame = () => {
-    setGameState({
-      ...initialGameState,
-      state: "playing",
-    });
+    setGameState(
+      (prev): GameState => ({
+        ...prev,
+        phase: "game",
+        gameResults: [],
+        nextPanorama: getAvailablePanorama(panoramas, [currentPanorama.id]),
+      })
+    );
+
+    setRoundState(
+      (): RoundState => ({
+        ...initialRoundState,
+        roundActive: true,
+      })
+    );
   };
 
-  const handleTimeUpdate = (time: number) => {
-    setGameState((prev) => ({ ...prev, timeLeft: time }));
-    if (time === 0) {
+  const handleGameEnd = () => {
+    setRoundState((): RoundState => initialRoundState);
+    setGameState(
+      (prev): GameState => ({
+        ...initialGameState,
+        gameResults: prev.gameResults,
+        phase: "results",
+      })
+    );
+  };
+
+  const handleSetGuessLocation = (location: LatLngTuple) => {
+    setRoundState((prev): RoundState => ({ ...prev, guessLocation: location }));
+  };
+
+  const handleMapButtonClick = () => {
+    if (roundActive && guessLocation) {
+      console.log("handleRoundEnd");
       handleRoundEnd();
+    } else if (!roundActive && currentRound < GAME_CONFIG.ROUNDS_PER_GAME) {
+      console.log("handleNextRound");
+      handleNextRound();
+    } else if (!roundActive && currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
+      console.log("handleGameEnd");
+      handleGameEnd();
+    } else {
+      console.log("handleMapButtonClick");
+    }
+    // TODO error logging - we should never get here
+  };
+
+  const handleCurrentPanoramicImgReady = () => {
+    if (phase === "menu" || phase === "results") {
+      setRoundState(
+        (prev): RoundState => ({ ...prev, currentRoundReady: true })
+      );
     }
   };
 
-  const handleRoundEnd = () => {
-    const distance = gameState.playerLocation
-      ? calculateDistance(
-          gameState.playerLocation,
-          gameState.screenshotLocation.location
-        )
-      : null;
-
-    const updatedGameResults: RoundResult[] = [
-      ...gameState.gameResults,
-      {
-        locationId: gameState.screenshotLocation.id,
-        distance,
-      },
-    ];
-
-    saveRoundLocation(gameState.screenshotLocation.id);
-    setGameState((prev) => ({
-      ...prev,
-      roundEnded: true,
-      gameResults: updatedGameResults,
-    }));
+  const handleNextPanoramicImgReady = () => {
+    if (phase === "game") {
+      setRoundState((prev): RoundState => ({ ...prev, nextRoundReady: true }));
+    }
   };
 
   const handleNextRound = () => {
-    if (gameState.currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
-      setGameState((prev) => ({ ...prev, state: "results" }));
-      return;
-    }
+    assertNotNull(nextPanorama, "nextPanorama");
+    const newCurrentPanorama = nextPanorama;
+    const newNextPanorama = getAvailablePanorama(panoramas, [
+      newCurrentPanorama.id,
+    ]);
 
-    const currentGameLocationIds = getcurrentGameLocationIds();
-    const randomLocation = getRandomLocation(locations, currentGameLocationIds);
+    setGameState(
+      (prev): GameState => ({
+        ...prev,
+        currentRound: prev.currentRound + 1,
+        currentPanorama: newCurrentPanorama,
+        nextPanorama: newNextPanorama,
+      })
+    );
 
-    setGameState((prev) => ({
-      ...prev,
-      currentRound: prev.currentRound + 1,
-      timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
-      playerLocation: null,
-      roundEnded: false,
-      screenshotLocation: randomLocation,
-      panoramicImgReady: false,
-    }));
+    setRoundState(
+      (): RoundState => ({
+        ...initialRoundState,
+        roundActive: true,
+      })
+    );
   };
 
-  const handlePanoramicImgReady = () => {
-    console.log("panoramic img ready");
-    setGameState((prev) => ({ ...prev, panoramicImgReady: true }));
-  };
+  const handleRoundEnd = useCallback(() => {
+    const distance = guessLocation
+      ? calculateDistance(guessLocation, currentPanorama.location)
+      : null;
 
-  const handleSubmit = () => {
-    if (gameState.timeLeft > 0 && gameState.playerLocation) {
-      handleRoundEnd();
-    }
-  };
+    const updatedGameResults: RoundResult[] = [
+      ...gameResults,
+      {
+        locationId: currentPanorama.id,
+        distance,
+        timeLeft: timeLeft,
+      },
+    ];
+
+    saveRoundLocation(currentPanorama.id);
+    setGameState(
+      (prev): GameState => ({
+        ...prev,
+        gameResults: updatedGameResults,
+      })
+    );
+    setRoundState(
+      (prev): RoundState => ({
+        ...prev,
+        roundActive: false,
+      })
+    );
+  }, [currentPanorama, gameResults, guessLocation, timeLeft]);
+
+  // Round timer
+  useEffect(() => {
+    if (!roundActive) return;
+
+    let animationFrameId: number;
+    const startTime = performance.now();
+    const initialTimeLeft = timeLeft;
+    let lastUpdateTime = 0;
+
+    const updateTimer = (currentTime: number) => {
+      const elapsedTime = (currentTime - startTime) / 1000;
+      const newTimeLeft = Math.max(0, initialTimeLeft - elapsedTime);
+
+      if (currentTime - lastUpdateTime > 10) {
+        lastUpdateTime = currentTime;
+        setRoundState(
+          (prev): RoundState => ({
+            ...prev,
+            timeLeft: newTimeLeft,
+            roundActive: newTimeLeft > 0,
+          })
+        );
+
+        if (newTimeLeft <= 0) {
+          handleRoundEnd();
+          return;
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(updateTimer);
+    };
+
+    animationFrameId = requestAnimationFrame(updateTimer);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [handleRoundEnd, roundActive, timeLeft]);
+
+  const disableMapButton = useMemo(() => {
+    return (
+      (timeLeft > 0 && !guessLocation) || (!roundActive && !nextRoundReady)
+    );
+  }, [timeLeft, guessLocation, roundActive, nextRoundReady]);
 
   return (
     <Box sx={styles.container}>
-      {gameState.state === "menu" && (
+      {phase === "menu" && (
         <MenuScreen
+          disableStartButton={!currentRoundReady}
           onStartGame={onStartGame}
-          panoramicImgReady={gameState.panoramicImgReady}
         />
       )}
-      {gameState.state === "results" && (
+      {phase === "results" && (
         <ResultsScreen
-          gameResults={gameState.gameResults}
-          onPlayAgain={onStartGame}
+          disableStartButton={!currentRoundReady}
+          gameResults={gameResults}
+          onStartGame={onStartGame}
         />
       )}
-      <RoundManager
-        timeLeft={gameState.timeLeft}
-        onTimeUpdate={handleTimeUpdate}
-        isPlaying={
-          gameState.state === "playing" &&
-          !gameState.roundEnded &&
-          gameState.timeLeft > 0
-        }
-      />
       <GuessMap
-        currentRound={gameState.currentRound}
-        timeLeft={gameState.timeLeft}
-        playerLocation={gameState.playerLocation}
-        setPlayerLocation={setPlayerLocation}
-        location={gameState.screenshotLocation.location}
-        showAnswer={gameState.timeLeft === 0 || gameState.roundEnded}
-        onSubmit={handleSubmit}
-        onNext={handleNextRound}
-        isPlaying={gameState.state === "playing"}
+        currentRound={currentRound}
+        timeLeft={timeLeft}
+        guessLocation={guessLocation}
+        setGuessLocation={handleSetGuessLocation}
+        panoramaLocation={currentPanorama.location}
+        showAnswer={!roundActive && phase === "game"}
+        onMapButtonClick={handleMapButtonClick}
+        mapButtonDisabled={disableMapButton}
+        isPlaying={phase === "game"}
       />
-      <PanoramicImg
-        src={gameState.screenshotLocation.image}
-        onReady={handlePanoramicImgReady}
+      <PanoramaViewer
+        src={currentPanorama.image}
+        preloadSrc={nextPanorama?.image || ""}
+        onCurrentReady={handleCurrentPanoramicImgReady}
+        onNextReady={handleNextPanoramicImgReady}
+        roundActive={roundActive}
       />
       <AudioPlayer />
     </Box>

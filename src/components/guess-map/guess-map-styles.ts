@@ -60,12 +60,5 @@ export const createStyles = (isExpanded: boolean): Record<string, ThemeUIStyleOb
       textShadow:
         "0px 2px 3px rgba(0,0,0,0.4), 0px 4px 13px rgba(0,0,0,0.1), 0px 8px 23px rgba(0,0,0,0.1)",
     },
-    button: {
-      position: "absolute",
-      bottom: 0,
-      right: 0,
-      left: 0,
-      height: `${BUTTON_HEIGHT}px`,
-    },
   };
 }; 

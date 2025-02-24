@@ -1,6 +1,6 @@
-import { Box, Button, Global } from "theme-ui";
+import { Box, Global } from "theme-ui";
 import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
-import { LatLngTuple } from "leaflet";
+import { LatLngTuple, LatLngBoundsLiteral } from "leaflet";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { GAME_CONFIG } from "../../utils";
 import { createStyles, globalStyles } from "./guess-map-styles";
@@ -12,35 +12,32 @@ import {
 import { GuessMapInfo } from "./guess-map-info";
 import { GuessMapResult } from "./guess-map-result";
 import L from "leaflet";
+import { GuessMapButton } from "./guess-map-button";
+
+const MAX_MAP_BOUNDS: LatLngBoundsLiteral = [
+  [-90, -180],
+  [90, 180],
+];
 
 type Props = {
-  playerLocation: LatLngTuple | null;
-  setPlayerLocation: (pos: LatLngTuple) => void;
-  location: LatLngTuple;
+  guessLocation: LatLngTuple | null;
+  setGuessLocation: (pos: LatLngTuple) => void;
+  panoramaLocation: LatLngTuple;
   showAnswer: boolean;
-  onSubmit: () => void;
-  onNext: () => void;
+  onMapButtonClick: () => void;
+  mapButtonDisabled: boolean;
   currentRound: number;
   timeLeft: number;
   isPlaying: boolean;
 };
 
-const getButtonText = (showAnswer: boolean, currentRound: number): string => {
-  if (showAnswer) {
-    return currentRound >= GAME_CONFIG.ROUNDS_PER_GAME
-      ? "Results"
-      : "Next round";
-  }
-  return "Guess";
-};
-
 export const GuessMap: React.FC<Props> = ({
-  playerLocation,
-  setPlayerLocation,
-  location,
+  guessLocation,
+  setGuessLocation,
+  panoramaLocation,
   showAnswer,
-  onSubmit,
-  onNext,
+  onMapButtonClick,
+  mapButtonDisabled,
   currentRound,
   timeLeft,
   isPlaying,
@@ -94,10 +91,7 @@ export const GuessMap: React.FC<Props> = ({
             zoom={2}
             minZoom={0}
             maxZoom={6}
-            maxBounds={[
-              [-90, -180],
-              [90, 180],
-            ]}
+            maxBounds={MAX_MAP_BOUNDS}
             crs={L.CRS.EPSG3857}
             className="map"
             wheelPxPerZoomLevel={180}
@@ -105,34 +99,36 @@ export const GuessMap: React.FC<Props> = ({
           >
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
             <AddMarkerOnClick
-              setLocation={setPlayerLocation}
+              setLocation={setGuessLocation}
               disabled={showAnswer || !isPlaying}
             />
             <FitBoundsOnAnswer
               showAnswer={showAnswer}
-              location={location}
-              playerLocation={playerLocation}
+              panoramaLocation={panoramaLocation}
+              guessLocation={guessLocation}
             />
             <ZoomOutOnNewRound currentRound={currentRound} />
-            {showAnswer && location && <Marker position={location} />}
-            {playerLocation && <Marker position={playerLocation} />}
-            {showAnswer && playerLocation && location && (
-              <Polyline positions={[location, playerLocation]} />
+            {showAnswer && panoramaLocation && (
+              <Marker position={panoramaLocation} />
+            )}
+            {guessLocation && <Marker position={guessLocation} />}
+            {showAnswer && guessLocation && panoramaLocation && (
+              <Polyline positions={[panoramaLocation, guessLocation]} />
             )}
           </MapContainer>
           {showAnswer && (
             <GuessMapResult
-              playerLocation={playerLocation}
-              location={location}
+              guessLocation={guessLocation}
+              panoramaLocation={panoramaLocation}
             />
           )}
-          <Button
-            variant="primary"
-            sx={styles.button}
-            onClick={showAnswer ? onNext : onSubmit}
-          >
-            {getButtonText(showAnswer, currentRound)}
-          </Button>
+          <GuessMapButton
+            showAnswer={showAnswer}
+            currentRound={currentRound}
+            maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
+            disabled={mapButtonDisabled}
+            onClick={onMapButtonClick}
+          />
         </Box>
       </Box>
     </>

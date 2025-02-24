@@ -1,16 +1,18 @@
-import { ThemeUIStyleObject, Button, Text, Box } from "theme-ui";
+import { ThemeUIStyleObject, Button, Text, Box, Heading } from "theme-ui";
 import { RoundResult } from "../App";
 import { Overlay } from "./overlay";
 import {
   calculateTotalScore,
   formatRoundResult,
-  formatScoreMessage,
+  getHighScore,
+  updateHighScore,
 } from "../utils";
 import { useState, useMemo } from "react";
 
 type Props = {
+  disableStartButton: boolean;
   gameResults: RoundResult[];
-  onPlayAgain: () => void;
+  onStartGame: () => void;
 };
 
 const styles: Record<string, ThemeUIStyleObject> = {
@@ -22,11 +24,23 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 export const ResultsScreen: React.FC<Props> = ({
+  disableStartButton,
   gameResults,
-  onPlayAgain,
+  onStartGame,
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const finalScore = calculateTotalScore(gameResults);
+
+  const headingMsg = useMemo(() => {
+    const highScore = getHighScore();
+    const isNewHighScore = finalScore >= highScore;
+    if (isNewHighScore) {
+      updateHighScore(finalScore);
+      return `New High Score! ${finalScore}`;
+    }
+    return `Score: ${finalScore} (Max: ${highScore})`;
+  }, [finalScore]);
+
   const formattedResults = useMemo(
     () =>
       gameResults.map((result, index) => ({
@@ -37,8 +51,8 @@ export const ResultsScreen: React.FC<Props> = ({
   );
 
   return (
-    <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onPlayAgain}>
-      <Text sx={styles.score}>{formatScoreMessage(finalScore)}</Text>
+    <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onStartGame}>
+      <Heading>{headingMsg}</Heading>
       <Box sx={styles.rounds}>
         {formattedResults.map(({ round, result }) => (
           <Text key={round}>
@@ -46,7 +60,12 @@ export const ResultsScreen: React.FC<Props> = ({
           </Text>
         ))}
       </Box>
-      <Button onClick={() => setIsFadingOut(true)}>Play Again</Button>
+      <Button
+        disabled={disableStartButton}
+        onClick={() => setIsFadingOut(true)}
+      >
+        Play Again
+      </Button>
     </Overlay>
   );
 };

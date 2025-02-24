@@ -33,15 +33,3 @@ export const updateHighScore = (newScore: number): number => {
   }
   return currentHigh;
 };
-
-export const formatScoreMessage = (score: number): string => {
-  const highScore = getHighScore();
-  const isNewHighScore = score >= highScore;
-  
-  if (isNewHighScore) {
-    updateHighScore(score);
-    return `New High Score! ${score}`;
-  }
-  
-  return `Final Score: ${score} (Max: ${highScore})`;
-};

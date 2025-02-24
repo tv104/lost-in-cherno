@@ -1,6 +1,6 @@
 # Lost in Cherno
 
-A front-end prototype for a DayZ based GeoGuesser.
+A front-end prototype for a DayZ GeoGuessr.
 
 ## Development
 

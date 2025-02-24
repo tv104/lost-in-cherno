@@ -1,12 +1,26 @@
-import { ScreenshotLocationConfig } from "../locations/chernarus/config";
+import { LatLngTuple } from 'leaflet'
+
+export type PanoramaConfig = {
+    id: string;
+    image: string;
+    location: LatLngTuple;
+}
+
 
 const STORAGE_KEY = "guessed_locations_history";
 const MAX_HISTORY_SIZE = 100;
 
+let cachedHistoricalLocations: string[] = [];
+
 export function loadGuessedLocations(): string[] {
+  if (cachedHistoricalLocations.length > 0) {
+    return cachedHistoricalLocations;
+  }
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    cachedHistoricalLocations = stored ? JSON.parse(stored) : [];
+    return cachedHistoricalLocations;
   } catch (e) {
     console.error("Failed to load guessed locations from localStorage:", e);
     return [];
@@ -23,10 +37,10 @@ export function saveRoundLocation(locationId: string): void {
   }
 }
 
-export function getRandomLocation(
-  locations: ScreenshotLocationConfig[],
+export function getAvailablePanorama(
+  locations: PanoramaConfig[],
   excludeIds: string[] = []
-): ScreenshotLocationConfig {
+): PanoramaConfig {
   const historicalLocations = loadGuessedLocations();
   const allExcludedIds = new Set([...excludeIds, ...historicalLocations]);
   

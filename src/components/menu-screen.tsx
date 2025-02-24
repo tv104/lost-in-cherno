@@ -4,21 +4,22 @@ import { useState } from "react";
 
 type Props = {
   onStartGame: () => void;
-  panoramicImgReady: boolean;
+  disableStartButton: boolean;
 };
 
 export const MenuScreen: React.FC<Props> = ({
   onStartGame,
-  panoramicImgReady,
+  disableStartButton,
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
+  console.log("isFadingOut", isFadingOut);
   return (
     <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onStartGame}>
       <Heading>A DayZ GeoGuessr</Heading>
       <Text>Guess the ingame location before time runs out</Text>
       <Button
         onClick={() => setIsFadingOut(true)}
-        disabled={!panoramicImgReady}
+        disabled={disableStartButton}
       >
         Play
       </Button>
