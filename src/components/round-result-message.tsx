@@ -2,6 +2,7 @@ import { ThemeUIStyleObject } from "theme-ui";
 import { Heading } from "theme-ui";
 import { LatLngTuple } from "leaflet";
 import { calculateDistance, getRandomDistanceItem } from "../utils";
+import { useMemo } from "react";
 
 type RoundResultMessageProps = {
   guessLocation: LatLngTuple | null;
@@ -43,8 +44,15 @@ const styles: Record<string, ThemeUIStyleObject> = {
 export const RoundResultMessage: React.FC<RoundResultMessageProps> = ({
   guessLocation,
   panoramaLocation,
-}) => (
-  <Heading sx={styles.container} as="h1">
-    {getResultMessage(guessLocation, panoramaLocation)}
-  </Heading>
-);
+}) => {
+  const message = useMemo(
+    () => getResultMessage(guessLocation, panoramaLocation),
+    [guessLocation, panoramaLocation]
+  );
+
+  return (
+    <Heading sx={styles.container} as="h1">
+      {message}
+    </Heading>
+  );
+};
