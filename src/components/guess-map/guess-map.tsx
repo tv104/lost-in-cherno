@@ -26,9 +26,9 @@ type Props = {
   showAnswer: boolean;
   onMapButtonClick: () => void;
   mapButtonDisabled: boolean;
+  mapMarkerDisabled: boolean;
   currentRound: number;
   timeLeft: number;
-  isPlaying: boolean;
   isTransitioningRound: boolean;
 };
 
@@ -39,21 +39,21 @@ export const GuessMap: React.FC<Props> = ({
   showAnswer,
   onMapButtonClick,
   mapButtonDisabled,
+  mapMarkerDisabled,
   currentRound,
   timeLeft,
-  isPlaying,
   isTransitioningRound,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  // UX: prevent unintentionally loading next round when timer runs out
+  const [isButtonCooldown, setIsButtonCooldown] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
 
   const handleMouseLeave = useCallback(() => {
-    // Clear any existing timeout
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
     }
 
-    // Set a new timeout
     timeoutRef.current = window.setTimeout(() => {
       if (!showAnswer) {
         setIsExpanded(false);
@@ -62,7 +62,6 @@ export const GuessMap: React.FC<Props> = ({
   }, [showAnswer]);
 
   const handleMouseEnter = useCallback(() => {
-    // Clear any existing timeout
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
     }
@@ -72,6 +71,11 @@ export const GuessMap: React.FC<Props> = ({
   useEffect(() => {
     if (showAnswer) {
       setIsExpanded(true);
+      setIsButtonCooldown(true);
+      const timeout = setTimeout(() => {
+        setIsButtonCooldown(false);
+      }, 500);
+      return () => clearTimeout(timeout);
     }
   }, [showAnswer]);
 
@@ -102,7 +106,7 @@ export const GuessMap: React.FC<Props> = ({
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
             <AddMarkerOnClick
               setLocation={setGuessLocation}
-              disabled={showAnswer || !isPlaying || isTransitioningRound}
+              disabled={mapMarkerDisabled}
             />
             <FitBoundsOnAnswer
               showAnswer={showAnswer}
@@ -128,7 +132,7 @@ export const GuessMap: React.FC<Props> = ({
             showAnswer={showAnswer}
             currentRound={currentRound}
             maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
-            disabled={mapButtonDisabled}
+            disabled={mapButtonDisabled || isButtonCooldown}
             onClick={onMapButtonClick}
           />
         </Box>

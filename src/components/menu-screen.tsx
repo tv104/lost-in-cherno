@@ -12,7 +12,6 @@ export const MenuScreen: React.FC<Props> = ({
   disableStartButton,
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
-  console.log("isFadingOut", isFadingOut);
   return (
     <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onStartGame}>
       <Heading>A DayZ GeoGuessr</Heading>

@@ -106,6 +106,9 @@ function App() {
     setGameState(
       (prev): GameState => ({
         ...initialGameState,
+        currentPanorama: getAvailablePanorama(panoramas, [
+          prev.currentPanorama.id,
+        ]),
         gameResults: prev.gameResults,
         phase: "results",
       })
@@ -137,9 +140,7 @@ function App() {
   };
 
   const handleNextPanoramicImgReady = () => {
-    if (phase === "game") {
-      setRoundState((prev): RoundState => ({ ...prev, nextRoundReady: true }));
-    }
+    setRoundState((prev): RoundState => ({ ...prev, nextRoundReady: true }));
   };
 
   const handleTransitionToNextRound = () => {
@@ -258,6 +259,10 @@ function App() {
     );
   }, [timeLeft, guessLocation, roundActive, nextRoundReady]);
 
+  const disableMapMarker = useMemo(() => {
+    return phase !== "game" || (!roundActive && !isTransitioningRound);
+  }, [phase, roundActive, isTransitioningRound]);
+
   const handlePanoramaTransitionEnd = () => {
     if (isTransitioningRound) {
       handleStartRound();
@@ -288,7 +293,7 @@ function App() {
         showAnswer={phase === "game" && !roundActive && !isTransitioningRound}
         onMapButtonClick={handleMapButtonClick}
         mapButtonDisabled={disableMapButton}
-        isPlaying={phase === "game"}
+        mapMarkerDisabled={disableMapMarker}
         isTransitioningRound={isTransitioningRound}
       />
       <PanoramaViewer
