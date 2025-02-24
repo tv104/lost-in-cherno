@@ -48,14 +48,17 @@ export function getAvailablePanorama(
     loc => !allExcludedIds.has(loc.id)
   );
   
-  // If we've used all locations, reset by using all locations except current round's
-  const candidateLocations = availableLocations.length > 0 
-    ? availableLocations 
-    : locations.filter(loc => !excludeIds.includes(loc.id));
-  
-  const randomLocation = candidateLocations[
-    Math.floor(Math.random() * candidateLocations.length)
-  ];
+  // If we've used all locations, reset history and use all locations except current round's
+  if (availableLocations.length === 0) {
+    cachedHistoricalLocations = [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
     
-  return randomLocation;
+    return locations.filter(loc => !excludeIds.includes(loc.id))[
+      Math.floor(Math.random() * (locations.length - excludeIds.length))
+    ];
+  }
+  
+  return availableLocations[
+    Math.floor(Math.random() * availableLocations.length)
+  ];
 }
