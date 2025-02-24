@@ -4,8 +4,8 @@ import { Logo } from "./logo";
 
 type Props = {
   children: React.ReactNode;
-  isFadingOut: boolean;
-  onFadeOutComplete: () => void;
+  isExiting: boolean;
+  onExited: () => void;
 };
 
 const styles: Record<string, ThemeUIStyleObject> = {
@@ -44,25 +44,15 @@ const styles: Record<string, ThemeUIStyleObject> = {
   },
 };
 
-export const Overlay: React.FC<Props> = ({
-  children,
-  isFadingOut,
-  onFadeOutComplete,
-}) => {
-  const handleTransitionEnd = (e: React.TransitionEvent) => {
-    if (e.target === e.currentTarget && isFadingOut) {
-      onFadeOutComplete();
-    }
-  };
-
+export const Overlay: React.FC<Props> = ({ children, isExiting, onExited }) => {
   return (
     <Box
       sx={{
         ...styles.container,
-        opacity: isFadingOut ? 0 : 1,
-        pointerEvents: isFadingOut ? "none" : "auto",
+        opacity: isExiting ? 0 : 1,
+        pointerEvents: isExiting ? "none" : "auto",
       }}
-      onTransitionEnd={handleTransitionEnd}
+      onTransitionEnd={isExiting ? onExited : undefined}
     >
       <Box sx={styles.contentContainer}>
         <Logo sx={styles.logo} />

@@ -11,15 +11,12 @@ export const MenuScreen: React.FC<Props> = ({
   onStartGame,
   disableStartButton,
 }) => {
-  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   return (
-    <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onStartGame}>
+    <Overlay isExiting={isExiting} onExited={onStartGame}>
       <Heading>A DayZ GeoGuessr</Heading>
       <Text>Guess the ingame location before time runs out</Text>
-      <Button
-        onClick={() => setIsFadingOut(true)}
-        disabled={disableStartButton}
-      >
+      <Button onClick={() => setIsExiting(true)} disabled={disableStartButton}>
         Play
       </Button>
     </Overlay>

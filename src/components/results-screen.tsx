@@ -28,7 +28,7 @@ export const ResultsScreen: React.FC<Props> = ({
   gameResults,
   onStartGame,
 }) => {
-  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const finalScore = calculateTotalScore(gameResults);
 
   const headingMsg = useMemo(() => {
@@ -51,7 +51,7 @@ export const ResultsScreen: React.FC<Props> = ({
   );
 
   return (
-    <Overlay isFadingOut={isFadingOut} onFadeOutComplete={onStartGame}>
+    <Overlay isExiting={isExiting} onExited={onStartGame}>
       <Heading>{headingMsg}</Heading>
       <Box sx={styles.rounds}>
         {formattedResults.map(({ round, result }) => (
@@ -60,10 +60,7 @@ export const ResultsScreen: React.FC<Props> = ({
           </Text>
         ))}
       </Box>
-      <Button
-        disabled={disableStartButton}
-        onClick={() => setIsFadingOut(true)}
-      >
+      <Button disabled={disableStartButton} onClick={() => setIsExiting(true)}>
         Play Again
       </Button>
     </Overlay>
