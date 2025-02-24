@@ -13,7 +13,8 @@ import {
   getAvailablePanorama,
   saveRoundLocation,
   assertNotNull,
-  PanoramaConfig,
+  type PanoramaConfig,
+  type RoundResult,
 } from "./utils";
 import { ResultsScreen } from "./components/results-screen";
 
@@ -23,12 +24,6 @@ const styles: Record<string, ThemeUIStyleObject> = {
     height: "100vh",
     width: "100%",
   },
-};
-
-export type RoundResult = {
-  locationId: string;
-  distance: number | null;
-  timeLeft: number;
 };
 
 // updates every round

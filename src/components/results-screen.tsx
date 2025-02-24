@@ -1,5 +1,5 @@
 import { ThemeUIStyleObject, Button, Text, Box, Heading } from "theme-ui";
-import { RoundResult } from "../App";
+import { type RoundResult } from "../utils";
 import { Overlay } from "./overlay";
 import {
   calculateTotalScore,
@@ -45,7 +45,7 @@ export const ResultsScreen: React.FC<Props> = ({
     () =>
       gameResults.map((result, index) => ({
         round: index + 1,
-        result: formatRoundResult(result.distance),
+        result: formatRoundResult(result.distance, result.timeLeft),
       })),
     [gameResults]
   );
