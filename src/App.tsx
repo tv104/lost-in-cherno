@@ -202,14 +202,16 @@ function App() {
     let animationFrameId: number;
     const startTime = performance.now();
     const initialTimeLeft = timeLeft;
-    let lastUpdateTime = 0;
+    let lastUpdateTime = startTime;
 
     const updateTimer = (currentTime: number) => {
-      const elapsedTime = (currentTime - startTime) / 1000;
+      const safeCurrentTime = Math.max(currentTime, lastUpdateTime);
+      const elapsedTime = (safeCurrentTime - startTime) / 1000;
       const newTimeLeft = Math.max(0, initialTimeLeft - elapsedTime);
 
-      if (currentTime - lastUpdateTime > 10) {
-        lastUpdateTime = currentTime;
+      // Update state if enough time has passed (10ms) or if timer reached 0
+      if (safeCurrentTime - lastUpdateTime >= 10 || newTimeLeft <= 0) {
+        lastUpdateTime = safeCurrentTime;
         setRoundState(
           (prev): RoundState => ({
             ...prev,
