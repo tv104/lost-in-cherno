@@ -79,7 +79,9 @@ export const GuessMap: React.FC<Props> = ({
       <Box sx={styles.container}>
         <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <GuessMapInfo
-            currentRound={currentRound}
+            currentRound={
+              isTransitioningRound ? currentRound + 1 : currentRound
+            }
             maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
             timeLeft={timeLeft}
             showAnswer={showAnswer}
