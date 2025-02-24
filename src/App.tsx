@@ -17,6 +17,7 @@ import {
   type RoundResult,
 } from "./utils";
 import { ResultsScreen } from "./components/results-screen";
+import { GuessMapResult } from "./components/guess-map/guess-map-result";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -65,6 +66,7 @@ const initialRoundState: RoundState = {
 function App() {
   const [gameState, setGameState] = useState<GameState>(initialGameState);
   const [roundState, setRoundState] = useState<RoundState>(initialRoundState);
+  const [isButtonCooldown, setIsButtonCooldown] = useState(false);
 
   const { currentRound, gameResults, phase, currentPanorama, nextPanorama } =
     gameState;
@@ -77,7 +79,7 @@ function App() {
     isTransitioningRound,
   } = roundState;
 
-  const handleStartGame = () => {
+  const handleStartGame = useCallback(() => {
     setGameState(
       (prev): GameState => ({
         ...prev,
@@ -94,9 +96,9 @@ function App() {
         isTransitioningRound: false,
       })
     );
-  };
+  }, [currentPanorama.id]);
 
-  const handleGameEnd = () => {
+  const handleGameEnd = useCallback(() => {
     setRoundState((): RoundState => initialRoundState);
     setGameState(
       (prev): GameState => ({
@@ -108,23 +110,11 @@ function App() {
         phase: "results",
       })
     );
-  };
+  }, []);
 
-  const handleSetGuessLocation = (location: LatLngTuple) => {
+  const handleSetGuessLocation = useCallback((location: LatLngTuple) => {
     setRoundState((prev): RoundState => ({ ...prev, guessLocation: location }));
-  };
-
-  const handleMapButtonClick = () => {
-    if (roundActive && guessLocation) {
-      handleRoundEnd();
-    } else if (!roundActive) {
-      if (currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
-        handleGameEnd();
-      } else {
-        handleTransitionToNextRound();
-      }
-    }
-  };
+  }, []);
 
   const handleCurrentPanoramicImgReady = () => {
     if (phase === "menu" || phase === "results") {
@@ -138,7 +128,7 @@ function App() {
     setRoundState((prev): RoundState => ({ ...prev, nextRoundReady: true }));
   };
 
-  const handleTransitionToNextRound = () => {
+  const handleTransitionToNextRound = useCallback(() => {
     setGameState(
       (prev): GameState => ({
         ...prev,
@@ -152,9 +142,9 @@ function App() {
         isTransitioningRound: true,
       })
     );
-  };
+  }, []);
 
-  const handleStartRound = () => {
+  const handleStartRound = useCallback(() => {
     assertNotNull(nextPanorama, "nextPanorama");
     const newCurrentPanorama = nextPanorama;
     const newNextPanorama = getAvailablePanorama(panoramas, [
@@ -176,7 +166,7 @@ function App() {
         isTransitioningRound: false,
       })
     );
-  };
+  }, [nextPanorama]);
 
   const handleRoundEnd = useCallback(() => {
     const distance = guessLocation
@@ -206,6 +196,34 @@ function App() {
       })
     );
   }, [currentPanorama, gameResults, guessLocation, timeLeft]);
+
+  const handleMapButtonClick = useCallback(() => {
+    if (isButtonCooldown) return;
+
+    setIsButtonCooldown(true);
+
+    if (roundActive && guessLocation) {
+      handleRoundEnd();
+    } else if (!roundActive) {
+      if (currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
+        handleGameEnd();
+      } else {
+        handleTransitionToNextRound();
+      }
+    }
+
+    setTimeout(() => {
+      setIsButtonCooldown(false);
+    }, 500);
+  }, [
+    roundActive,
+    guessLocation,
+    handleRoundEnd,
+    currentRound,
+    handleGameEnd,
+    handleTransitionToNextRound,
+    isButtonCooldown,
+  ]);
 
   // Round timer
   useEffect(() => {
@@ -249,13 +267,28 @@ function App() {
   }, [handleRoundEnd, roundActive, timeLeft]);
 
   const disableMapButton = useMemo(() => {
+    if (isButtonCooldown) return true;
+
+    const isLastRound = currentRound >= GAME_CONFIG.ROUNDS_PER_GAME;
+
+    if (!roundActive && isLastRound) {
+      return false;
+    }
+
     return (
       (timeLeft > 0 && !guessLocation) || (!roundActive && !nextRoundReady)
     );
-  }, [timeLeft, guessLocation, roundActive, nextRoundReady]);
+  }, [
+    isButtonCooldown,
+    currentRound,
+    roundActive,
+    timeLeft,
+    guessLocation,
+    nextRoundReady,
+  ]);
 
   const disableMapMarker = useMemo(() => {
-    return phase !== "game" || (!roundActive && !isTransitioningRound);
+    return phase !== "game" || !roundActive || isTransitioningRound;
   }, [phase, roundActive, isTransitioningRound]);
 
   const handlePanoramaTransitionEnd = () => {
@@ -263,6 +296,21 @@ function App() {
       handleStartRound();
     }
   };
+
+  const showAnswer = useMemo(() => {
+    return phase === "game" && !roundActive && !isTransitioningRound;
+  }, [phase, roundActive, isTransitioningRound]);
+
+  // Add effect to handle answer reveal cooldown
+  useEffect(() => {
+    if (showAnswer) {
+      setIsButtonCooldown(true);
+      const timeout = setTimeout(() => {
+        setIsButtonCooldown(false);
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [showAnswer]);
 
   return (
     <Box sx={styles.container}>
@@ -285,7 +333,7 @@ function App() {
         guessLocation={guessLocation}
         setGuessLocation={handleSetGuessLocation}
         panoramaLocation={currentPanorama.location}
-        showAnswer={phase === "game" && !roundActive && !isTransitioningRound}
+        showAnswer={showAnswer}
         onMapButtonClick={handleMapButtonClick}
         mapButtonDisabled={disableMapButton}
         mapMarkerDisabled={disableMapMarker}
@@ -300,6 +348,12 @@ function App() {
         isTransitioningRound={isTransitioningRound}
         onTransitionEnd={handlePanoramaTransitionEnd}
       />
+      {showAnswer && (
+        <GuessMapResult
+          guessLocation={guessLocation}
+          panoramaLocation={currentPanorama.location}
+        />
+      )}
       <AudioPlayer />
     </Box>
   );
