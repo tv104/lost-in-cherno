@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useRef, useCallback, useLayoutEffect } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 import { Box, ThemeUIStyleObject } from "theme-ui";
 
@@ -31,6 +31,33 @@ export const PanoramaViewer: React.FC<Props> = ({
     hideNavbarButton: true,
   };
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const currentImageRef = useRef<HTMLDivElement>(null);
+
+  const handleTransitionEnd = useCallback(() => {
+    onTransitionEnd();
+
+    // Clean up
+    if (containerRef.current) {
+      containerRef.current.style.willChange = "auto";
+    }
+    if (currentImageRef.current) {
+      currentImageRef.current.style.willChange = "auto";
+    }
+  }, [onTransitionEnd]);
+
+  // Apply willChange before transitions start
+  useLayoutEffect(() => {
+    if (isTransitioningRound || !roundActive) {
+      if (containerRef.current) {
+        containerRef.current.style.willChange = "filter";
+      }
+      if (currentImageRef.current) {
+        currentImageRef.current.style.willChange = "filter";
+      }
+    }
+  }, [isTransitioningRound, roundActive]);
+
   const styles: Record<string, ThemeUIStyleObject> = {
     container: {
       position: "absolute",
@@ -39,7 +66,7 @@ export const PanoramaViewer: React.FC<Props> = ({
       right: 0,
       bottom: 0,
       zIndex: "panorama",
-      filter: roundActive ? "none" : "grayscale(0.55) brightness(0.95)",
+      filter: roundActive ? "none" : "grayscale(0.75) brightness(0.95)",
       transition: "filter 0.2s linear",
     },
     panoramaImage: {
@@ -61,11 +88,12 @@ export const PanoramaViewer: React.FC<Props> = ({
   };
 
   return (
-    <Box sx={styles.container}>
+    <Box sx={styles.container} ref={containerRef}>
       <Box
         sx={{ ...styles.panoramaImage, ...styles.currentImage }}
         key={`${src}-${gameCount}`}
-        onTransitionEnd={onTransitionEnd}
+        onTransitionEnd={handleTransitionEnd}
+        ref={currentImageRef}
       >
         <ReactPhotoSphereViewer
           {...commonProps}
