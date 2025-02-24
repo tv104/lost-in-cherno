@@ -121,7 +121,7 @@ const AudioPlayer = () => {
     <Box sx={styles.container}>
       <audio ref={audioRef} src="/lost-in-cherno.mp3" loop />
       <Button sx={styles.playButton} onClick={togglePlayPause}>
-        {isPlaying ? <VolumeMuteIcon /> : <VolumeUpIcon />}
+        {isPlaying ? <VolumeUpIcon /> : <VolumeMuteIcon />}
       </Button>
     </Box>
   );
