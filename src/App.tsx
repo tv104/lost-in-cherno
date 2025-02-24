@@ -307,6 +307,7 @@ function App() {
         mapButtonDisabled={disableMapButton}
         mapMarkerDisabled={disableMapMarker}
         isTransitioningRound={isTransitioningRound}
+        gameCount={gameCount}
       />
       <PanoramaViewer
         src={panoramas[currentRound - 1].image}

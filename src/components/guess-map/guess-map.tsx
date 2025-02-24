@@ -29,6 +29,7 @@ type Props = {
   currentRound: number;
   timeLeft: number;
   isTransitioningRound: boolean;
+  gameCount: number;
 };
 
 export const GuessMap: React.FC<Props> = ({
@@ -42,6 +43,7 @@ export const GuessMap: React.FC<Props> = ({
   currentRound,
   timeLeft,
   isTransitioningRound,
+  gameCount,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
@@ -107,13 +109,16 @@ export const GuessMap: React.FC<Props> = ({
               panoramaLocation={panoramaLocation}
               guessLocation={guessLocation}
             />
-            <ZoomOutOnTransition transitioning={isTransitioningRound} />
-            {showAnswer && panoramaLocation && (
-              <Marker position={panoramaLocation} />
-            )}
+            <ZoomOutOnTransition
+              transitioning={isTransitioningRound}
+              gameCount={gameCount}
+            />
             {guessLocation && <Marker position={guessLocation} />}
             {showAnswer && guessLocation && panoramaLocation && (
               <Polyline positions={[panoramaLocation, guessLocation]} />
+            )}
+            {showAnswer && panoramaLocation && (
+              <Marker position={panoramaLocation} />
             )}
           </MapContainer>
 

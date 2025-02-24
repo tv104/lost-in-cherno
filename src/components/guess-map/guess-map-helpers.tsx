@@ -47,15 +47,24 @@ export const FitBoundsOnAnswer = ({
 
 export const ZoomOutOnTransition = ({
   transitioning,
+  gameCount,
 }: {
   transitioning: boolean;
+  gameCount: number;
 }) => {
   const map = useMap();
+
   useEffect(() => {
     if (transitioning) {
       map.setZoom(1, { animate: true });
+      map.setView([0, 0], 1, { animate: true });
     }
   }, [transitioning, map]);
+
+  useEffect(() => {
+    map.setZoom(1, { animate: true });
+    map.setView([0, 0], 1, { animate: true });
+  }, [gameCount, map]);
 
   return null;
 };
