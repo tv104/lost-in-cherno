@@ -1,4 +1,4 @@
-import { panoramas } from "./locations/chernarus/config";
+import { panoramas as allPanoramas } from "./locations/chernarus/config";
 import AudioPlayer from "./components/audio-player";
 import { GuessMap } from "./components/guess-map/guess-map";
 import { PanoramaViewer } from "./components/panorama-viewer";
@@ -49,7 +49,7 @@ const initialGameState: GameState = {
   currentRound: 1,
   gameResults: [],
   phase: "menu",
-  panoramas: getPanoramasForNewGame(panoramas, GAME_CONFIG.ROUNDS_PER_GAME),
+  panoramas: getPanoramasForNewGame(allPanoramas, GAME_CONFIG.ROUNDS_PER_GAME),
   gameCount: 0,
 };
 
@@ -101,7 +101,7 @@ function App() {
       (prev): GameState => ({
         ...initialGameState,
         panoramas: getPanoramasForNewGame(
-          panoramas,
+          allPanoramas,
           GAME_CONFIG.ROUNDS_PER_GAME
         ),
         gameResults: prev.gameResults,
@@ -109,7 +109,7 @@ function App() {
         gameCount: prev.gameCount + 1,
       })
     );
-  }, [panoramas]);
+  }, []);
 
   const handleSetGuessLocation = useCallback((location: LatLngTuple) => {
     setRoundState((prev): RoundState => ({ ...prev, guessLocation: location }));
