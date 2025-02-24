@@ -39,7 +39,7 @@ export const PanoramaViewer: React.FC<Props> = ({
       right: 0,
       bottom: 0,
       zIndex: "panorama",
-      filter: roundActive ? "none" : "grayscale(0.65)",
+      filter: roundActive ? "none" : "grayscale(0.55) brightness(0.95)",
       transition: "filter 0.2s linear",
     },
     panoramaImage: {

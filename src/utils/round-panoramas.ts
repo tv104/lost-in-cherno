@@ -6,21 +6,12 @@ export type PanoramaConfig = {
     location: LatLngTuple;
 }
 
-
 const STORAGE_KEY = "guessed_locations_history";
-const MAX_HISTORY_SIZE = 100;
-
-let cachedHistoricalLocations: string[] = [];
 
 export function loadGuessedLocations(): string[] {
-  if (cachedHistoricalLocations.length > 0) {
-    return cachedHistoricalLocations;
-  }
-
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    cachedHistoricalLocations = stored ? JSON.parse(stored) : [];
-    return cachedHistoricalLocations;
+    return stored ? JSON.parse(stored) : [];
   } catch (e) {
     console.error("Failed to load guessed locations from localStorage:", e);
     return [];
@@ -30,35 +21,35 @@ export function loadGuessedLocations(): string[] {
 export function saveRoundLocation(locationId: string): void {
   try {
     const history = loadGuessedLocations();
-    const updatedHistory = [locationId, ...history].slice(0, MAX_HISTORY_SIZE);
+    const updatedHistory = [...history, locationId];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
   } catch (e) {
     console.error("Failed to save guessed location to localStorage:", e);
   }
 }
 
-export function getAvailablePanorama(
-  locations: PanoramaConfig[],
-  excludeIds: string[] = []
-): PanoramaConfig {
+export function getPanoramasForNewGame(panoramas: PanoramaConfig[], roundsPerGame: number): PanoramaConfig[] {
   const historicalLocations = loadGuessedLocations();
-  const allExcludedIds = new Set([...excludeIds, ...historicalLocations]);
-  
-  const availableLocations = locations.filter(
-    loc => !allExcludedIds.has(loc.id)
+  let availablePanoramas = panoramas.filter(
+    panorama => !historicalLocations.includes(panorama.id)
   );
-  
-  // If we've used all locations, reset history and use all locations except current round's
-  if (availableLocations.length === 0) {
-    cachedHistoricalLocations = [];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+
+  if (availablePanoramas.length < roundsPerGame) {
+    // try to fill remaining slots with historical locations
+    const historicalPanoramas = panoramas.filter(
+      panorama => historicalLocations.includes(panorama.id)
+    );
     
-    return locations.filter(loc => !excludeIds.includes(loc.id))[
-      Math.floor(Math.random() * (locations.length - excludeIds.length))
+    availablePanoramas = [
+      ...availablePanoramas,
+      ...historicalPanoramas
     ];
+
+    if (availablePanoramas.length < roundsPerGame) {
+      throw new Error("Not enough locations to start a new game");
+    }
   }
-  
-  return availableLocations[
-    Math.floor(Math.random() * availableLocations.length)
-  ];
+
+  availablePanoramas.sort(() => Math.random() - 0.5);
+  return availablePanoramas.slice(0, roundsPerGame);
 }

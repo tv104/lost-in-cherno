@@ -10,11 +10,10 @@ import { MenuScreen } from "./components/menu-screen";
 import {
   calculateDistance,
   GAME_CONFIG,
-  getAvailablePanorama,
   saveRoundLocation,
-  assertNotNull,
   type PanoramaConfig,
   type RoundResult,
+  getPanoramasForNewGame,
 } from "./utils";
 import { ResultsScreen } from "./components/results-screen";
 import { RoundResultMessage } from "./components/round-result-message";
@@ -32,8 +31,8 @@ type GameState = {
   currentRound: number;
   gameResults: RoundResult[];
   phase: "menu" | "game" | "results";
-  currentPanorama: PanoramaConfig;
-  nextPanorama: PanoramaConfig | null;
+  panoramas: PanoramaConfig[];
+  gameCount: number;
 };
 
 // updates within a round
@@ -50,8 +49,8 @@ const initialGameState: GameState = {
   currentRound: 1,
   gameResults: [],
   phase: "menu",
-  currentPanorama: getAvailablePanorama(panoramas, []),
-  nextPanorama: null,
+  panoramas: getPanoramasForNewGame(panoramas, GAME_CONFIG.ROUNDS_PER_GAME),
+  gameCount: 0,
 };
 
 const initialRoundState: RoundState = {
@@ -68,14 +67,13 @@ function App() {
   const [roundState, setRoundState] = useState<RoundState>(initialRoundState);
   const [isButtonCooldown, setIsButtonCooldown] = useState(false);
 
-  const { currentRound, gameResults, phase, currentPanorama, nextPanorama } =
-    gameState;
+  const { currentRound, gameResults, phase, panoramas, gameCount } = gameState;
   const {
     guessLocation,
     roundActive,
     timeLeft,
     currentRoundReady,
-    nextRoundReady,
+    // nextRoundReady,
     isTransitioningRound,
   } = roundState;
 
@@ -85,7 +83,6 @@ function App() {
         ...prev,
         phase: "game",
         gameResults: [],
-        nextPanorama: getAvailablePanorama(panoramas, [currentPanorama.id]),
       })
     );
 
@@ -96,21 +93,23 @@ function App() {
         isTransitioningRound: false,
       })
     );
-  }, [currentPanorama.id]);
+  }, []);
 
   const handleGameEnd = useCallback(() => {
     setRoundState((): RoundState => initialRoundState);
     setGameState(
       (prev): GameState => ({
         ...initialGameState,
-        currentPanorama: getAvailablePanorama(panoramas, [
-          prev.currentPanorama.id,
-        ]),
+        panoramas: getPanoramasForNewGame(
+          panoramas,
+          GAME_CONFIG.ROUNDS_PER_GAME
+        ),
         gameResults: prev.gameResults,
         phase: "results",
+        gameCount: prev.gameCount + 1,
       })
     );
-  }, []);
+  }, [panoramas]);
 
   const handleSetGuessLocation = useCallback((location: LatLngTuple) => {
     setRoundState((prev): RoundState => ({ ...prev, guessLocation: location }));
@@ -129,6 +128,15 @@ function App() {
   };
 
   const handleTransitionToNextRound = useCallback(() => {
+    setRoundState(
+      (): RoundState => ({
+        ...initialRoundState,
+        isTransitioningRound: true,
+      })
+    );
+  }, []);
+
+  const handleStartRound = useCallback(() => {
     setGameState(
       (prev): GameState => ({
         ...prev,
@@ -139,50 +147,27 @@ function App() {
     setRoundState(
       (): RoundState => ({
         ...initialRoundState,
-        isTransitioningRound: true,
-      })
-    );
-  }, []);
-
-  const handleStartRound = useCallback(() => {
-    assertNotNull(nextPanorama, "nextPanorama");
-    const newCurrentPanorama = nextPanorama;
-    const newNextPanorama = getAvailablePanorama(panoramas, [
-      newCurrentPanorama.id,
-    ]);
-
-    setGameState(
-      (prev): GameState => ({
-        ...prev,
-        currentPanorama: newCurrentPanorama,
-        nextPanorama: newNextPanorama,
-      })
-    );
-
-    setRoundState(
-      (): RoundState => ({
-        ...initialRoundState,
         roundActive: true,
         isTransitioningRound: false,
       })
     );
-  }, [nextPanorama]);
+  }, []);
 
   const handleRoundEnd = useCallback(() => {
     const distance = guessLocation
-      ? calculateDistance(guessLocation, currentPanorama.location)
+      ? calculateDistance(guessLocation, panoramas[currentRound - 1].location)
       : null;
 
     const updatedGameResults: RoundResult[] = [
       ...gameResults,
       {
-        locationId: currentPanorama.id,
+        locationId: panoramas[currentRound - 1].id,
         distance,
         timeLeft: timeLeft,
       },
     ];
 
-    saveRoundLocation(currentPanorama.id);
+    saveRoundLocation(panoramas[currentRound - 1].id);
     setGameState(
       (prev): GameState => ({
         ...prev,
@@ -195,7 +180,7 @@ function App() {
         roundActive: false,
       })
     );
-  }, [currentPanorama, gameResults, guessLocation, timeLeft]);
+  }, [panoramas, currentRound, gameResults, guessLocation, timeLeft]);
 
   const handleMapButtonClick = useCallback(() => {
     if (isButtonCooldown) return;
@@ -246,7 +231,6 @@ function App() {
           (prev): RoundState => ({
             ...prev,
             timeLeft: newTimeLeft,
-            roundActive: newTimeLeft > 0,
           })
         );
 
@@ -269,23 +253,8 @@ function App() {
   const disableMapButton = useMemo(() => {
     if (isButtonCooldown) return true;
 
-    const isLastRound = currentRound >= GAME_CONFIG.ROUNDS_PER_GAME;
-
-    if (!roundActive && isLastRound) {
-      return false;
-    }
-
-    return (
-      (timeLeft > 0 && !guessLocation) || (!roundActive && !nextRoundReady)
-    );
-  }, [
-    isButtonCooldown,
-    currentRound,
-    roundActive,
-    timeLeft,
-    guessLocation,
-    nextRoundReady,
-  ]);
+    return timeLeft > 0 && !guessLocation;
+  }, [isButtonCooldown, timeLeft, guessLocation]);
 
   const disableMapMarker = useMemo(() => {
     return phase !== "game" || !roundActive || isTransitioningRound;
@@ -332,7 +301,7 @@ function App() {
         timeLeft={timeLeft}
         guessLocation={guessLocation}
         setGuessLocation={handleSetGuessLocation}
-        panoramaLocation={currentPanorama.location}
+        panoramaLocation={panoramas[currentRound - 1].location}
         showAnswer={showAnswer}
         onMapButtonClick={handleMapButtonClick}
         mapButtonDisabled={disableMapButton}
@@ -340,18 +309,19 @@ function App() {
         isTransitioningRound={isTransitioningRound}
       />
       <PanoramaViewer
-        src={currentPanorama.image}
-        preloadSrc={nextPanorama?.image || ""}
+        src={panoramas[currentRound - 1].image}
+        preloadSrc={panoramas[currentRound]?.image}
         onCurrentReady={handleCurrentPanoramicImgReady}
         onNextReady={handleNextPanoramicImgReady}
         roundActive={roundActive}
         isTransitioningRound={isTransitioningRound}
         onTransitionEnd={handlePanoramaTransitionEnd}
+        gameCount={gameCount}
       />
       {showAnswer && (
         <RoundResultMessage
           guessLocation={guessLocation}
-          panoramaLocation={currentPanorama.location}
+          panoramaLocation={panoramas[currentRound - 1].location}
         />
       )}
       <AudioPlayer />
