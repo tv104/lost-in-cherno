@@ -1,9 +1,9 @@
 import { ThemeUIStyleObject } from "theme-ui";
-import { Text } from "theme-ui";
+import { Heading } from "theme-ui";
 import { LatLngTuple } from "leaflet";
-import { calculateDistance, getRandomDistanceItem } from "../../utils";
+import { calculateDistance, getRandomDistanceItem } from "../utils";
 
-type GuessMapResultProps = {
+type RoundResultMessageProps = {
   guessLocation: LatLngTuple | null;
   panoramaLocation: LatLngTuple;
 };
@@ -25,24 +25,26 @@ const getResultMessage = (
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
     position: "absolute",
-    top: "352px",
+    top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     color: "white",
-    fontWeight: "bold",
     textShadow: "game",
-    fontSize: 4,
-    whiteSpace: "pre-line",
-    textAlign: "center",
     textTransform: "uppercase",
+    zIndex: "map",
+    pointerEvents: "none",
   },
 };
 
-export const GuessMapResult: React.FC<GuessMapResultProps> = ({
+export const RoundResultMessage: React.FC<RoundResultMessageProps> = ({
   guessLocation,
   panoramaLocation,
 }) => (
-  <Text sx={styles.container}>
+  <Heading sx={styles.container} as="h1">
     {getResultMessage(guessLocation, panoramaLocation)}
-  </Text>
+  </Heading>
 );

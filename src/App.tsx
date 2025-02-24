@@ -17,7 +17,7 @@ import {
   type RoundResult,
 } from "./utils";
 import { ResultsScreen } from "./components/results-screen";
-import { GuessMapResult } from "./components/guess-map/guess-map-result";
+import { RoundResultMessage } from "./components/round-result-message";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -349,7 +349,7 @@ function App() {
         onTransitionEnd={handlePanoramaTransitionEnd}
       />
       {showAnswer && (
-        <GuessMapResult
+        <RoundResultMessage
           guessLocation={guessLocation}
           panoramaLocation={currentPanorama.location}
         />

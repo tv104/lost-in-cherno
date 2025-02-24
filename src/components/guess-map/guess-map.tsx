@@ -10,7 +10,6 @@ import {
   FitBoundsOnAnswer,
 } from "./guess-map-helpers";
 import { GuessMapInfo } from "./guess-map-info";
-import { GuessMapResult } from "./guess-map-result";
 import L from "leaflet";
 import { GuessMapButton } from "./guess-map-button";
 
@@ -45,8 +44,6 @@ export const GuessMap: React.FC<Props> = ({
   isTransitioningRound,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  // UX: prevent unintentionally loading next round when timer runs out
-  const [isButtonCooldown, setIsButtonCooldown] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
 
   const handleMouseLeave = useCallback(() => {
@@ -71,11 +68,6 @@ export const GuessMap: React.FC<Props> = ({
   useEffect(() => {
     if (showAnswer) {
       setIsExpanded(true);
-      setIsButtonCooldown(true);
-      const timeout = setTimeout(() => {
-        setIsButtonCooldown(false);
-      }, 500);
-      return () => clearTimeout(timeout);
     }
   }, [showAnswer]);
 
@@ -122,17 +114,12 @@ export const GuessMap: React.FC<Props> = ({
               <Polyline positions={[panoramaLocation, guessLocation]} />
             )}
           </MapContainer>
-          {showAnswer && (
-            <GuessMapResult
-              guessLocation={guessLocation}
-              panoramaLocation={panoramaLocation}
-            />
-          )}
+
           <GuessMapButton
             showAnswer={showAnswer}
             currentRound={currentRound}
             maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
-            disabled={mapButtonDisabled || isButtonCooldown}
+            disabled={mapButtonDisabled}
             onClick={onMapButtonClick}
           />
         </Box>
