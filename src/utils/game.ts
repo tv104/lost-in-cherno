@@ -1,6 +1,6 @@
 export const GAME_CONFIG = {
-  ROUNDS_PER_GAME: 3,
-  SECONDS_PER_ROUND: 3,
+  ROUNDS_PER_GAME: 5,
+  SECONDS_PER_ROUND: 30,
 };
 
 export type RoundResult = {

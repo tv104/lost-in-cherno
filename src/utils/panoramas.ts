@@ -41,6 +41,10 @@ export function getPanoramasForNewGame(panoramas: PanoramaConfig[], roundsPerGam
     clearLocationHistory();
     historicalLocations = [];
     unseenPanoramas = [...panoramas];
+
+    if (unseenPanoramas.length < roundsPerGame) {
+      throw new Error("Not enough panoramas to start a new game");
+    }
   }
   
   unseenPanoramas.sort(() => Math.random() - 0.5);
