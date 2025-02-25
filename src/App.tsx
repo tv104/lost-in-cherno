@@ -129,9 +129,7 @@ function App() {
         isTransitioningRound: false,
       })
     );
-
-    resetTimer();
-  }, [resetTimer]);
+  }, []);
 
   const handleGameEnd = useCallback(() => {
     setRoundState((): RoundState => initialRoundState);
