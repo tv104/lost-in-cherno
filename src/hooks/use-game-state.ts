@@ -91,7 +91,6 @@ export function useGameState(allPanoramas: PanoramaConfig[]) {
       gameResults: [],
       roundActive: true,
       guessLocation: null,
-      firstRoundReady: false,
       nextRoundReady: false,
       isTransitioningRound: false
     });
