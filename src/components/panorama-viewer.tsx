@@ -26,7 +26,7 @@ export const PanoramaViewer: React.FC<Props> = ({
   const commonProps = {
     height: "100vh",
     width: "100%",
-    // littlePlanet: true,
+    // littlePlanet: true, // TODO hardmode combined with other visual effects
     navbar: false,
     hideNavbarButton: true,
   };
@@ -37,7 +37,6 @@ export const PanoramaViewer: React.FC<Props> = ({
   const handleTransitionEnd = useCallback(() => {
     onTransitionEnd();
 
-    // Clean up
     if (containerRef.current) {
       containerRef.current.style.willChange = "auto";
     }
@@ -91,7 +90,7 @@ export const PanoramaViewer: React.FC<Props> = ({
     <Box sx={styles.container} ref={containerRef}>
       <Box
         sx={{ ...styles.panoramaImage, ...styles.currentImage }}
-        key={`${src}-${gameCount}`}
+        key={`${src}-${gameCount}`} // gameCount is used to ensure the component re-renders
         onTransitionEnd={handleTransitionEnd}
         ref={currentImageRef}
       >
@@ -105,7 +104,7 @@ export const PanoramaViewer: React.FC<Props> = ({
       {preloadSrc && (
         <Box
           sx={{ ...styles.panoramaImage, ...styles.nextImage }}
-          key={`${preloadSrc}-${gameCount}`}
+          key={`${preloadSrc}-${gameCount}`} // gameCount is used to ensure the component re-renders
         >
           <ReactPhotoSphereViewer
             {...commonProps}
