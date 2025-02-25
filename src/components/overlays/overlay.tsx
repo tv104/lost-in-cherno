@@ -1,5 +1,5 @@
 import { ThemeUIStyleObject, Box } from "theme-ui";
-import { Footer } from "../footer";
+import { Footer } from "./footer";
 import { Logo } from "../logo/logo";
 
 type Props = {

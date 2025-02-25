@@ -1,5 +1,5 @@
 import { Box, ThemeUIStyleObject, Link } from "theme-ui";
-import { GitHubIcon } from "./icons";
+import { GitHubIcon } from "../icons";
 
 type Props = {
   sx?: ThemeUIStyleObject;
