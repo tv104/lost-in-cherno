@@ -3,9 +3,8 @@ import { type RoundResult } from "../utils";
 import { Overlay } from "./overlay";
 import {
   calculateTotalScore,
-  formatRoundResult,
-  getHighScore,
-  updateHighScore,
+  formatGameResults,
+  getScoreHeadingMessage,
 } from "../utils";
 import { useState, useMemo } from "react";
 
@@ -31,22 +30,13 @@ export const ResultsScreen: React.FC<Props> = ({
   const [isExiting, setIsExiting] = useState(false);
   const finalScore = calculateTotalScore(gameResults);
 
-  const headingMsg = useMemo(() => {
-    const highScore = getHighScore();
-    const isNewHighScore = finalScore >= highScore;
-    if (isNewHighScore) {
-      updateHighScore(finalScore);
-      return `New High Score! ${finalScore.toLocaleString()}`;
-    }
-    return `Score: ${finalScore.toLocaleString()} (Max: ${highScore.toLocaleString()})`;
-  }, [finalScore]);
+  const headingMsg = useMemo(
+    () => getScoreHeadingMessage(finalScore),
+    [finalScore]
+  );
 
   const formattedResults = useMemo(
-    () =>
-      gameResults.map((result, index) => ({
-        round: index + 1,
-        result: formatRoundResult(result.distance, result.timeLeft),
-      })),
+    () => formatGameResults(gameResults),
     [gameResults]
   );
 

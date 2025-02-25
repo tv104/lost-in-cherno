@@ -3,7 +3,7 @@ import { RoundResult } from "./game";
 const BASE_POINTS = 10000;
 const HIGH_SCORE_KEY = 'high_score';
 
-const DAYZ_DEATH_MESSAGES = [
+export const DAYZ_DEATH_MESSAGES = [
   "Player was sniped from 800m",
   "Player bled out after a gunfight",
   "Player died of cholera",
@@ -42,31 +42,79 @@ export const calculateTotalScore = (results: RoundResult[]): number => {
   }, 0);
 };
 
+export const getRandomDeathMessage = (messages: string[] = DAYZ_DEATH_MESSAGES): string => {
+  const randomIndex = Math.floor(Math.random() * messages.length);
+  return messages[randomIndex];
+};
+
 export const formatRoundResult = (distance: number | null, timeLeft: number): string => {
   if (distance === null) {
     return getRandomDeathMessage();
   }
   
-  const timeInMs = Math.round(timeLeft * 1000);
-  const formattedTime = timeInMs.toLocaleString();
-  return `${Math.round(distance).toLocaleString()} ${getRandomDistanceItem(distance)} away with ${formattedTime}ms remaining`;
+  const formattedTime = (timeLeft).toFixed(3) + 's';
+  return `${Math.round(distance).toLocaleString()} ${getRandomDistanceItem(distance)} away with ${formattedTime} remaining`;
 };
 
-const getRandomDeathMessage = (): string => {
-  const randomIndex = Math.floor(Math.random() * DAYZ_DEATH_MESSAGES.length);
-  return DAYZ_DEATH_MESSAGES[randomIndex];
+export const storageOperations = {
+  getItem: (key: string): string | null => {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.error(`Error getting item from localStorage: ${key}`, e);
+      return null;
+    }
+  },
+  
+  setItem: (key: string, value: string): boolean => {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (e) {
+      console.error(`Error setting item in localStorage: ${key}`, e);
+      return false;
+    }
+  }
 };
 
-export const getHighScore = (): number => {
-  const stored = localStorage.getItem(HIGH_SCORE_KEY);
+export const getHighScore = (storage = storageOperations): number => {
+  const stored = storage.getItem(HIGH_SCORE_KEY);
   return stored ? parseInt(stored, 10) : 0;
 };
 
-export const updateHighScore = (newScore: number): number => {
-  const currentHigh = getHighScore();
+export const updateHighScore = (newScore: number, storage = storageOperations): number => {
+  const currentHigh = getHighScore(storage);
   if (newScore > currentHigh) {
-    localStorage.setItem(HIGH_SCORE_KEY, newScore.toString());
+    storage.setItem(HIGH_SCORE_KEY, newScore.toString());
     return newScore;
   }
   return currentHigh;
+};
+
+export const resetHighScore = (storage = storageOperations): void => {
+  storage.setItem(HIGH_SCORE_KEY, '0');
+};
+
+export type FormattedRoundResult = {
+  round: number;
+  result: string;
+};
+
+export const formatGameResults = (gameResults: RoundResult[]): FormattedRoundResult[] => {
+  return gameResults.map((result, index) => ({
+    round: index + 1,
+    result: formatRoundResult(result.distance, result.timeLeft),
+  }));
+};
+
+export const getScoreHeadingMessage = (finalScore: number): string => {
+  const highScore = getHighScore();
+  const isNewHighScore = finalScore >= highScore;
+  
+  if (isNewHighScore) {
+    updateHighScore(finalScore);
+    return `New High Score! ${finalScore.toLocaleString()}`;
+  }
+  
+  return `Score: ${finalScore.toLocaleString()} (Max: ${highScore.toLocaleString()})`;
 };
