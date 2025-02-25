@@ -1,8 +1,10 @@
 {
   "name": "lost-in-cherno",
+  "author": "tv104",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
