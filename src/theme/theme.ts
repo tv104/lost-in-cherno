@@ -1,5 +1,4 @@
-// import { Theme } from 'theme-ui'
-import type { Theme } from './theme.types'
+import { Theme } from 'theme-ui'
 
 export const theme: Theme = {
   colors: {
@@ -7,17 +6,18 @@ export const theme: Theme = {
     secondary: '#1a1d22',
     background: '#1a1d22',
     text: '#FFFFFF',
+    mapBackground: '#29331D',
   },
   fonts: {
     body: '"Tomorrow", serif',
     heading: '"Tomorrow", serif',
   },
   shadows: {
-    game: "0px 2px 3px rgba(0,0,0,0.6), 0px 4px 13px rgba(0,0,0,0.1), 0px 8px 23px rgba(0,0,0,0.1)",
+    overlay: "0px 2px 3px rgba(0,0,0,0.6), 0px 4px 13px rgba(0,0,0,0.1), 0px 8px 23px rgba(0,0,0,0.1)",
   },
   buttons: {
     base: {
-      borderRadius: 8,
+      borderRadius: 'medium',
       height: 56,
       fontWeight: 500,
       textTransform: 'uppercase',
@@ -75,5 +75,10 @@ export const theme: Theme = {
     map: 2,
     overlay: 3,
     audioPlayer: 4,
-  }
+  },
+  radii: {
+    small: 4,
+    medium: 8,
+    large: 16,
+  },
 }

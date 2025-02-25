@@ -48,7 +48,7 @@ const styles: Record<string, ThemeUIStyleObject> = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    textShadow: "game",
+    textShadow: "overlay",
   },
   timeLeft: {
     fontFamily: "monospace",

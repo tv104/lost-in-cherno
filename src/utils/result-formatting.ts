@@ -1,7 +1,8 @@
-import { getRandomDistanceItem } from "./distance";
+import { calculateDistance, getRandomDistanceItem } from "./distance";
 import { getRandomDeathMessage } from "./death-messages";
 import { RoundResult } from "./game";
 import { getHighScore, updateHighScore } from "./score/high-score";
+import { LatLngTuple } from "leaflet";
 
 export const formatRoundResult = (distance: number | null, timeLeft: number): string => {
   if (distance === null) {
@@ -34,4 +35,18 @@ export const getScoreHeadingMessage = (finalScore: number): string => {
   }
   
   return `Score: ${finalScore.toLocaleString()} (Max: ${highScore.toLocaleString()})`;
+};
+
+export const getResultMessage = (
+  guessLocation: LatLngTuple | null,
+  panoramaLocation: LatLngTuple
+) => {
+  if (!guessLocation) {
+    return `You are dead`;
+  }
+
+  const distance = Math.round(
+    calculateDistance(guessLocation, panoramaLocation)
+  );
+  return `${distance.toLocaleString()} ${getRandomDistanceItem(distance)} away`;
 };

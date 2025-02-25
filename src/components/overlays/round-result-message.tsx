@@ -1,26 +1,12 @@
 import { ThemeUIStyleObject } from "theme-ui";
 import { Heading } from "theme-ui";
 import { LatLngTuple } from "leaflet";
-import { calculateDistance, getRandomDistanceItem } from "../../utils";
+import { getResultMessage } from "../../utils";
 import { useMemo } from "react";
 
 type RoundResultMessageProps = {
   guessLocation: LatLngTuple | null;
   panoramaLocation: LatLngTuple;
-};
-
-const getResultMessage = (
-  guessLocation: LatLngTuple | null,
-  panoramaLocation: LatLngTuple
-) => {
-  if (!guessLocation) {
-    return `You are dead`;
-  }
-
-  const distance = Math.round(
-    calculateDistance(guessLocation, panoramaLocation)
-  );
-  return `${distance.toLocaleString()} ${getRandomDistanceItem(distance)} away`;
 };
 
 const styles: Record<string, ThemeUIStyleObject> = {
@@ -34,7 +20,7 @@ const styles: Record<string, ThemeUIStyleObject> = {
     justifyContent: "center",
     alignItems: "center",
     color: "white",
-    textShadow: "game",
+    textShadow: "overlay",
     textTransform: "uppercase",
     zIndex: "overlay",
     pointerEvents: "none",
