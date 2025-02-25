@@ -1,11 +1,11 @@
 import { LatLngTuple } from "leaflet";
 
-const largeItems = [
+export const largeDistanceItems = [
   "axes", "sledges", "shovels", "picks", "mosins",  
   "m4s", "akms", "rods", "sticks", "planks"
 ];
 
-const smallItems = [
+export const smallDistanceItems = [
   "screwdrivers", "pistol mags",
   "canteens", "radios", "compasses", "tapes",  
   "handcuffs", "bandages",  
@@ -14,9 +14,9 @@ const smallItems = [
 
 export const getRandomDistanceItem = (distance: number): string => {
   if (distance > 5000) {
-    return largeItems[Math.floor(Math.random() * largeItems.length)];
+    return largeDistanceItems[Math.floor(Math.random() * largeDistanceItems.length)];
   } else {
-    return smallItems[Math.floor(Math.random() * smallItems.length)];
+    return smallDistanceItems[Math.floor(Math.random() * smallDistanceItems.length)];
   }
 };
 

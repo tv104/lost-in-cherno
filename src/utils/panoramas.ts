@@ -6,11 +6,11 @@ export type PanoramaConfig = {
     location: LatLngTuple;
 }
 
-const STORAGE_KEY = "guessed_locations_history";
+export const GUESSED_LOCATIONS_STORAGE_KEY = "guessed_locations_history";
 
 export function loadGuessedLocations(): string[] {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(GUESSED_LOCATIONS_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   } catch (e) {
     console.error("Failed to load guessed locations from localStorage:", e);
@@ -22,7 +22,7 @@ export function saveRoundLocation(locationId: string): void {
   try {
     const history = loadGuessedLocations();
     const updatedHistory = [...history, locationId];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
+    localStorage.setItem(GUESSED_LOCATIONS_STORAGE_KEY, JSON.stringify(updatedHistory));
   } catch (e) {
     console.error("Failed to save guessed location to localStorage:", e);
   }
@@ -53,7 +53,7 @@ export function getPanoramasForNewGame(panoramas: PanoramaConfig[], roundsPerGam
 
 export function clearLocationHistory(): void {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(GUESSED_LOCATIONS_STORAGE_KEY);
   } catch (e) {
     console.error("Failed to clear location history:", e);
   }
