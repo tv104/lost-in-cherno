@@ -17,6 +17,7 @@ import {
 } from "./utils";
 import { ResultsScreen } from "./components/results-screen";
 import { RoundResultMessage } from "./components/round-result-message";
+import { useRoundTimer } from "./hooks";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -39,7 +40,6 @@ type GameState = {
 type RoundState = {
   guessLocation: LatLngTuple | null;
   roundActive: boolean;
-  timeLeft: number;
   currentRoundReady: boolean;
   nextRoundReady: boolean;
   isTransitioningRound: boolean;
@@ -56,7 +56,6 @@ const initialGameState: GameState = {
 const initialRoundState: RoundState = {
   guessLocation: null,
   roundActive: false,
-  timeLeft: GAME_CONFIG.SECONDS_PER_ROUND,
   currentRoundReady: false,
   nextRoundReady: false,
   isTransitioningRound: false,
@@ -71,11 +70,48 @@ function App() {
   const {
     guessLocation,
     roundActive,
-    timeLeft,
     currentRoundReady,
     // nextRoundReady,
     isTransitioningRound,
   } = roundState;
+
+  const { timeLeft, resetTimer } = useRoundTimer({
+    initialTime: GAME_CONFIG.SECONDS_PER_ROUND,
+    isActive: roundActive,
+    onTimeUp: () => handleRoundEnd(true),
+  });
+
+  const handleRoundEnd = useCallback(
+    (timerExpired = false) => {
+      const distance = guessLocation
+        ? calculateDistance(guessLocation, panoramas[currentRound - 1].location)
+        : null;
+
+      const updatedGameResults: RoundResult[] = [
+        ...gameResults,
+        {
+          locationId: panoramas[currentRound - 1].id,
+          distance,
+          timeLeft: timerExpired ? 0 : timeLeft,
+        },
+      ];
+
+      saveRoundLocation(panoramas[currentRound - 1].id);
+      setGameState(
+        (prev): GameState => ({
+          ...prev,
+          gameResults: updatedGameResults,
+        })
+      );
+      setRoundState(
+        (prev): RoundState => ({
+          ...prev,
+          roundActive: false,
+        })
+      );
+    },
+    [panoramas, currentRound, gameResults, guessLocation, timeLeft]
+  );
 
   const handleStartGame = useCallback(() => {
     setGameState(
@@ -93,7 +129,9 @@ function App() {
         isTransitioningRound: false,
       })
     );
-  }, []);
+
+    resetTimer();
+  }, [resetTimer]);
 
   const handleGameEnd = useCallback(() => {
     setRoundState((): RoundState => initialRoundState);
@@ -151,39 +189,9 @@ function App() {
         isTransitioningRound: false,
       })
     );
-  }, []);
 
-  const handleRoundEnd = useCallback(
-    (timerExpired = false) => {
-      const distance = guessLocation
-        ? calculateDistance(guessLocation, panoramas[currentRound - 1].location)
-        : null;
-
-      const updatedGameResults: RoundResult[] = [
-        ...gameResults,
-        {
-          locationId: panoramas[currentRound - 1].id,
-          distance,
-          timeLeft: timerExpired ? 0 : timeLeft,
-        },
-      ];
-
-      saveRoundLocation(panoramas[currentRound - 1].id);
-      setGameState(
-        (prev): GameState => ({
-          ...prev,
-          gameResults: updatedGameResults,
-        })
-      );
-      setRoundState(
-        (prev): RoundState => ({
-          ...prev,
-          roundActive: false,
-        })
-      );
-    },
-    [panoramas, currentRound, gameResults, guessLocation, timeLeft]
-  );
+    resetTimer();
+  }, [resetTimer]);
 
   const handleMapButtonClick = useCallback(() => {
     if (isButtonCooldown) return;
@@ -212,46 +220,6 @@ function App() {
     handleTransitionToNextRound,
     isButtonCooldown,
   ]);
-
-  // Round timer
-  useEffect(() => {
-    if (!roundActive) return;
-
-    let animationFrameId: number;
-    const startTime = performance.now();
-    const initialTimeLeft = timeLeft;
-    let lastUpdateTime = startTime;
-
-    const updateTimer = (currentTime: number) => {
-      const safeCurrentTime = Math.max(currentTime, lastUpdateTime);
-      const elapsedTime = (safeCurrentTime - startTime) / 1000;
-      const newTimeLeft = Math.max(0, initialTimeLeft - elapsedTime);
-
-      // Update state if enough time has passed (10ms) or if timer reached 0
-      if (safeCurrentTime - lastUpdateTime >= 10 || newTimeLeft <= 0) {
-        lastUpdateTime = safeCurrentTime;
-        setRoundState(
-          (prev): RoundState => ({
-            ...prev,
-            timeLeft: newTimeLeft,
-          })
-        );
-
-        if (newTimeLeft <= 0) {
-          handleRoundEnd(true);
-          return;
-        }
-      }
-
-      animationFrameId = requestAnimationFrame(updateTimer);
-    };
-
-    animationFrameId = requestAnimationFrame(updateTimer);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [handleRoundEnd, roundActive, timeLeft]);
 
   const disableMapButton = useMemo(() => {
     if (isButtonCooldown) return true;
