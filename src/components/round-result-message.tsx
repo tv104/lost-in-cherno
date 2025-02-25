@@ -36,7 +36,7 @@ const styles: Record<string, ThemeUIStyleObject> = {
     color: "white",
     textShadow: "game",
     textTransform: "uppercase",
-    zIndex: "map",
+    zIndex: "overlay",
     pointerEvents: "none",
   },
 };

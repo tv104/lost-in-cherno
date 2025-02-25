@@ -73,7 +73,7 @@ export const theme: Theme = {
   zIndices: {
     panorama: 1,
     map: 2,
-    menu: 3,
+    overlay: 3,
     audioPlayer: 4,
   }
 }

@@ -20,7 +20,7 @@ const styles: Record<string, ThemeUIStyleObject> = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    zIndex: "menu",
+    zIndex: "overlay",
     p: 4,
     overflowY: "auto",
     opacity: 1,
