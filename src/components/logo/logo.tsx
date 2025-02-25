@@ -1,5 +1,5 @@
 import { Image, ThemeUIStyleObject } from "theme-ui";
-import logo from "../assets/logo.webp";
+import logo from "./logo.webp";
 
 type Props = {
   sx?: ThemeUIStyleObject;
