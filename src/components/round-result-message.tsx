@@ -20,7 +20,7 @@ const getResultMessage = (
   const distance = Math.round(
     calculateDistance(guessLocation, panoramaLocation)
   );
-  return `${distance} ${getRandomDistanceItem(distance)} away`;
+  return `${distance.toLocaleString()} ${getRandomDistanceItem(distance)} away`;
 };
 
 const styles: Record<string, ThemeUIStyleObject> = {

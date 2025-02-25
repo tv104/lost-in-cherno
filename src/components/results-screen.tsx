@@ -36,9 +36,9 @@ export const ResultsScreen: React.FC<Props> = ({
     const isNewHighScore = finalScore >= highScore;
     if (isNewHighScore) {
       updateHighScore(finalScore);
-      return `New High Score! ${finalScore}`;
+      return `New High Score! ${finalScore.toLocaleString()}`;
     }
-    return `Score: ${finalScore} (Max: ${highScore})`;
+    return `Score: ${finalScore.toLocaleString()} (Max: ${highScore.toLocaleString()})`;
   }, [finalScore]);
 
   const formattedResults = useMemo(
