@@ -54,11 +54,11 @@ export const GuessMap: React.FC<Props> = ({
     }
 
     timeoutRef.current = window.setTimeout(() => {
-      if (!showAnswer) {
+      if (!showAnswer && !guessLocation) {
         setIsExpanded(false);
       }
     }, 1000);
-  }, [showAnswer]);
+  }, [showAnswer, guessLocation]);
 
   const handleMouseEnter = useCallback(() => {
     if (timeoutRef.current) {
@@ -68,10 +68,10 @@ export const GuessMap: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    if (showAnswer) {
+    if (showAnswer || guessLocation) {
       setIsExpanded(true);
     }
-  }, [showAnswer]);
+  }, [showAnswer, guessLocation]);
 
   const styles = createStyles(isExpanded);
 
