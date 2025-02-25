@@ -1,7 +1,7 @@
 import { ThemeUIStyleObject } from "theme-ui";
 import { Heading } from "theme-ui";
 import { LatLngTuple } from "leaflet";
-import { calculateDistance, getRandomDistanceItem } from "../utils";
+import { calculateDistance, getRandomDistanceItem } from "../../utils";
 import { useMemo } from "react";
 
 type RoundResultMessageProps = {

@@ -1,11 +1,11 @@
 import { ThemeUIStyleObject, Button, Text, Box, Heading } from "theme-ui";
-import { type RoundResult } from "../utils";
 import { Overlay } from "./overlay";
 import {
   calculateTotalScore,
   formatGameResults,
   getScoreHeadingMessage,
-} from "../utils";
+  type RoundResult,
+} from "../../utils";
 import { useState, useMemo } from "react";
 
 type Props = {

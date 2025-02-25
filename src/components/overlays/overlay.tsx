@@ -1,6 +1,6 @@
 import { ThemeUIStyleObject, Box } from "theme-ui";
-import { Footer } from "./footer";
-import { Logo } from "./logo";
+import { Footer } from "../footer";
+import { Logo } from "../logo";
 
 type Props = {
   children: React.ReactNode;

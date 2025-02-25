@@ -1,12 +1,11 @@
 import { panoramas as allPanoramas } from "./locations/chernarus/config";
 import AudioPlayer from "./components/audio-player";
-import { GuessMap } from "./components/guess-map/guess-map";
+import { GuessMap } from "./components/guess-map";
 import { PanoramaViewer } from "./components/panorama-viewer";
 import { ThemeUIStyleObject } from "theme-ui";
 import { Box } from "theme-ui";
 import { LatLngTuple } from "leaflet";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { MenuScreen } from "./components/menu-screen";
 import {
   calculateDistance,
   GAME_CONFIG,
@@ -15,8 +14,11 @@ import {
   type RoundResult,
   getPanoramasForNewGame,
 } from "./utils";
-import { ResultsScreen } from "./components/results-screen";
-import { RoundResultMessage } from "./components/round-result-message";
+import {
+  RoundResultMessage,
+  ResultsScreen,
+  MenuScreen,
+} from "./components/overlays";
 import { useRoundTimer } from "./hooks";
 
 const styles: Record<string, ThemeUIStyleObject> = {
