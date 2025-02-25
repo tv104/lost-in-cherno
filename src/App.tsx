@@ -153,34 +153,37 @@ function App() {
     );
   }, []);
 
-  const handleRoundEnd = useCallback(() => {
-    const distance = guessLocation
-      ? calculateDistance(guessLocation, panoramas[currentRound - 1].location)
-      : null;
+  const handleRoundEnd = useCallback(
+    (timerExpired = false) => {
+      const distance = guessLocation
+        ? calculateDistance(guessLocation, panoramas[currentRound - 1].location)
+        : null;
 
-    const updatedGameResults: RoundResult[] = [
-      ...gameResults,
-      {
-        locationId: panoramas[currentRound - 1].id,
-        distance,
-        timeLeft: timeLeft,
-      },
-    ];
+      const updatedGameResults: RoundResult[] = [
+        ...gameResults,
+        {
+          locationId: panoramas[currentRound - 1].id,
+          distance,
+          timeLeft: timerExpired ? 0 : timeLeft,
+        },
+      ];
 
-    saveRoundLocation(panoramas[currentRound - 1].id);
-    setGameState(
-      (prev): GameState => ({
-        ...prev,
-        gameResults: updatedGameResults,
-      })
-    );
-    setRoundState(
-      (prev): RoundState => ({
-        ...prev,
-        roundActive: false,
-      })
-    );
-  }, [panoramas, currentRound, gameResults, guessLocation, timeLeft]);
+      saveRoundLocation(panoramas[currentRound - 1].id);
+      setGameState(
+        (prev): GameState => ({
+          ...prev,
+          gameResults: updatedGameResults,
+        })
+      );
+      setRoundState(
+        (prev): RoundState => ({
+          ...prev,
+          roundActive: false,
+        })
+      );
+    },
+    [panoramas, currentRound, gameResults, guessLocation, timeLeft]
+  );
 
   const handleMapButtonClick = useCallback(() => {
     if (isButtonCooldown) return;
@@ -235,7 +238,7 @@ function App() {
         );
 
         if (newTimeLeft <= 0) {
-          handleRoundEnd();
+          handleRoundEnd(true);
           return;
         }
       }
