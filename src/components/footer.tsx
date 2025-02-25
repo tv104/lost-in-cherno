@@ -38,16 +38,32 @@ export const Footer = ({ sx }: Props) => {
         href="https://github.com/tv104/lost-in-cherno"
         sx={styles.link}
         target="_blank"
+        rel="noopener noreferrer"
       >
         <GitHubIcon /> GitHub
       </Link>
-      <Link href="https://dayz.com/" sx={styles.link} target="_blank">
+      <Link
+        href="https://dayz.com/"
+        sx={styles.link}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         DayZ
       </Link>
-      <Link href="https://suno.com/" sx={styles.link} target="_blank">
+      <Link
+        href="https://suno.com/"
+        sx={styles.link}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         Music by Suno
       </Link>
-      <Link href="https://dayz.ginfo.gg/" sx={styles.link} target="_blank">
+      <Link
+        href="https://dayz.ginfo.gg/"
+        sx={styles.link}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         2D map by iSurvive
       </Link>
     </Box>
