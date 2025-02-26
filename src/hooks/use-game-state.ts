@@ -74,9 +74,6 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
       phase: 'game',
       gameResults: [],
       roundActive: true,
-      guessLocation: null,
-      nextRoundReady: false,
-      isTransitioningRound: false
     });
   }, [updateState]);
 
@@ -86,6 +83,7 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
       GAME_CONFIG.ROUNDS_PER_GAME
     );
     
+    // prepare state for next game
     updateState({
       currentRound: 1,
       phase: 'results',
@@ -117,25 +115,20 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
   const handleTransitionToNextRound = useCallback(() => {
     updateState({
       guessLocation: null,
-      roundActive: false,
-      firstRoundReady: false,
-      nextRoundReady: false,
       isTransitioningRound: true
     });
-  }, [updateState]);
+    resetTimer();
+  }, [updateState, resetTimer]);
 
   const handleStartRound = useCallback(() => {
     updateState({
       currentRound: currentRound + 1,
-      guessLocation: null,
       roundActive: true,
-      firstRoundReady: false,
       nextRoundReady: false,
       isTransitioningRound: false
     });
-    
-    resetTimer();
-  }, [currentRound, resetTimer, updateState]);
+
+  }, [currentRound, updateState]);
 
   const [mapButtonDisabled, setMapButtonDisabled] = useState(false);
 

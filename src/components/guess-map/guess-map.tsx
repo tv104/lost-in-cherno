@@ -75,9 +75,7 @@ export const GuessMap: React.FC = () => {
               isTransitioningRound ? currentRound + 1 : currentRound
             }
             maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
-            timeLeft={
-              isTransitioningRound ? GAME_CONFIG.SECONDS_PER_ROUND : timeLeft
-            }
+            timeLeft={timeLeft}
             showAnswer={showAnswer}
           />
           <MapContainer
