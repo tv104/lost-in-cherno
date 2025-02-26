@@ -1,5 +1,5 @@
 import { Box, Global } from "theme-ui";
-import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import { LatLngBoundsLiteral } from "leaflet";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { GAME_CONFIG } from "../../config";
@@ -12,8 +12,9 @@ import {
 import { GuessMapInfo } from "./guess-map-info";
 import L from "leaflet";
 import { GuessMapButton } from "./guess-map-button";
-import { useGameStateContext } from "../../contexts";
 import { GuessMapLocationLabels } from "./guess-map-location-labels";
+import { GuessMapMarker } from "./guess-map-marker";
+import { useGameStateContext } from "../../contexts";
 
 const MAX_MAP_BOUNDS: LatLngBoundsLiteral = [
   [-90, -180],
@@ -105,11 +106,11 @@ export const GuessMap: React.FC = () => {
               transitioning={isTransitioningRound}
               gameCount={gameCount}
             />
-            {guessLocation && <Marker position={guessLocation} />}
+            {guessLocation && <GuessMapMarker position={guessLocation} />}
             {showAnswer && guessLocation && (
               <Polyline positions={[roundLocation, guessLocation]} />
             )}
-            {showAnswer && <Marker position={roundLocation} />}
+            {showAnswer && <GuessMapMarker position={roundLocation} />}
           </MapContainer>
 
           <GuessMapButton

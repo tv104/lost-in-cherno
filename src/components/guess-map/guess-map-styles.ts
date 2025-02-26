@@ -13,14 +13,17 @@ export const globalStyles: ThemeUIStyleObject = {
     backgroundColor: "mapBackground",
   },
 
-  ".leaflet-marker-icon:nth-of-type(1)": {
-    filter: "hue-rotate(-60deg)",
+  ".leaflet-marker-icon": {
+    filter: "drop-shadow(1px 5px 3px rgba(0,0,0,0.6))",
+    '&:nth-of-type(1)': {
+      filter: "drop-shadow(1px 5px 3px rgba(0,0,0,0.6)) hue-rotate(-60deg)",
+    }
   },
 };
 
 export const createStyles = (isExpanded: boolean): Record<string, ThemeUIStyleObject> => {
   const duration = isExpanded ? "0.1s" : "0.4s";
-  
+
   return {
     container: {
       height: `calc(${isExpanded ? SIZE : SMOL_SIZE}px + ${GAP}px + ${BUTTON_HEIGHT}px)`,
