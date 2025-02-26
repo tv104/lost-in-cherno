@@ -33,7 +33,7 @@ import image7 from './panoramas/7.webp'
 import image8 from './panoramas/8.webp'
 import image9 from './panoramas/9.webp'
 
-import { LocationConfig } from '../types'
+import { LocationConfig } from '../../types'
 
 export const locationConfigs: LocationConfig[] = [
     { id: "1", image: image1, location: [0, 0] },

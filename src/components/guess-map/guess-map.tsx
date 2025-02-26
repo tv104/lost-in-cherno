@@ -13,6 +13,7 @@ import { GuessMapInfo } from "./guess-map-info";
 import L from "leaflet";
 import { GuessMapButton } from "./guess-map-button";
 import { useGameStateContext } from "../../contexts";
+import { GuessMapLocationLabels } from "./guess-map-location-labels";
 
 const MAX_MAP_BOUNDS: LatLngBoundsLiteral = [
   [-90, -180],
@@ -90,6 +91,7 @@ export const GuessMap: React.FC = () => {
             maxBoundsViscosity={1.0}
           >
             <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
+            <GuessMapLocationLabels />
             <AddMarkerOnClick
               setLocation={handleSetGuessLocation}
               disabled={disableMapMarker}

@@ -8,7 +8,7 @@ export const DAYZ_DEATH_MESSAGES = [
   "Drank pond water",
   "Run over by own vehicle",
   "Ate rotten fruit",
-  "Stuck in queue",
+  "Got stuck in queue",
   "No message received (connection lost)",
   "Desynced while climbing ladder",
   "Killed by invisible zombie",
