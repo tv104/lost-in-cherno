@@ -1,0 +1,55 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      # Configure base path for Vite if your repo name is not the root domain
+      - name: Update vite.config.ts
+        run: |
+          echo "import { defineConfig } from 'vite'
+          import react from '@vitejs/plugin-react'
+
+          export default defineConfig({
+            plugins: [react()],
+            base: '/lost-in-cherno/',
+          })" > vite.config.ts
+
+      - name: Build with updated config
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/master'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
