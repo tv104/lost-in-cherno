@@ -95,9 +95,10 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
       roundActive: false,
       firstRoundReady: false,
       nextRoundReady: false,
-      isTransitioningRound: false
+      isTransitioningRound: false,
     });
-  }, [allPanoramas, gameCount, updateState]);
+    resetTimer();
+  }, [allPanoramas, gameCount, updateState, resetTimer]);
 
   const handleSetGuessLocation = useCallback((location: LatLngTuple) => {
     updateState({ guessLocation: location });
