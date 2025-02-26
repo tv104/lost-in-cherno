@@ -1,8 +1,8 @@
-# Lost in Cherno | DayZ GeoGuessr
+# Lost in Cherno
 
 [gameplay.webm](https://github.com/user-attachments/assets/3cfe999a-ff12-4e2c-ba0d-55d09971afc1)
 
-- A frontend prototype
+- A frontend prototype for a DayZ based GeoGuessr
 - Over 30 Chernarus locations
 - Lacks touch/mobile support
 - Deployed on [GitHub Pages](https://tv104.github.io/lost-in-cherno/)
