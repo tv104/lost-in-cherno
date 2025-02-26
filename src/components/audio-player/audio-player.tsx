@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Box, Button, ThemeUIStyleObject } from "theme-ui";
-import { VolumeUpIcon, VolumeMuteIcon } from "./icons";
+import { VolumeUpIcon, VolumeMuteIcon } from "../icons";
+import backgroundMusic from './lost-in-cherno.mp3'
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -19,7 +20,7 @@ const styles: Record<string, ThemeUIStyleObject> = {
   },
 };
 
-const AudioPlayer = () => {
+export const AudioPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasStartedOnce, setHasStartedOnce] = useState(false);
@@ -118,12 +119,10 @@ const AudioPlayer = () => {
 
   return (
     <Box sx={styles.container}>
-      <audio ref={audioRef} src="/lost-in-cherno.mp3" loop />
+      <audio ref={audioRef} src={backgroundMusic} loop />
       <Button sx={styles.playButton} onClick={togglePlayPause}>
         {isPlaying ? <VolumeUpIcon /> : <VolumeMuteIcon />}
       </Button>
     </Box>
   );
 };
-
-export default AudioPlayer;

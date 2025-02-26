@@ -1,5 +1,5 @@
 import { locationConfigs as chernarusLocationConfigs } from "./config/chernarus/locations";
-import AudioPlayer from "./components/audio-player";
+import { AudioPlayer } from "./components/audio-player";
 import { GuessMap } from "./components/guess-map";
 import { PanoramaViewer } from "./components/panorama-viewer";
 import { ThemeUIStyleObject, Box } from "theme-ui";
