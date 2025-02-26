@@ -23,14 +23,14 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 export const RoundResultMessage: React.FC = () => {
-  const { guessLocation, panoramas, currentRound, showAnswer } =
+  const { guessLocation, gameLocations, currentRound, showAnswer } =
     useGameStateContext();
 
-  const panoramaLocation = panoramas[currentRound - 1].location;
+  const roundLocation = gameLocations[currentRound - 1].location;
 
   const message = useMemo(
-    () => getResultMessage(guessLocation, panoramaLocation),
-    [guessLocation, panoramaLocation]
+    () => getResultMessage(guessLocation, roundLocation),
+    [guessLocation, roundLocation]
   );
 
   if (!showAnswer) {

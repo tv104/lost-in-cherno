@@ -1,6 +1,6 @@
 export * from "./time"; 
 export * from "./distance";
-export * from "./panoramas";
+export * from "./locations";
 export * from "./score/score-calculation";
 export * from "./death-messages";
 export * from "./result-formatting";

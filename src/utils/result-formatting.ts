@@ -39,14 +39,14 @@ export const getScoreHeadingMessage = (finalScore: number): string => {
 
 export const getResultMessage = (
   guessLocation: LatLngTuple | null,
-  panoramaLocation: LatLngTuple
+  roundLocation: LatLngTuple
 ) => {
   if (!guessLocation) {
     return `You are dead`;
   }
 
   const distance = Math.round(
-    calculateDistance(guessLocation, panoramaLocation)
+    calculateDistance(guessLocation, roundLocation)
   );
   return `${distance.toLocaleString()} ${getRandomDistanceItem(distance)} away`;
 };

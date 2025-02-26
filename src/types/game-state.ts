@@ -19,7 +19,7 @@ export interface GameStateType {
   currentRound: number;
   gameResults: RoundResult[];
   phase: GamePhase;
-  panoramas: LocationConfig[];
+  gameLocations: LocationConfig[];
   gameCount: number;
   
   // Round state

@@ -19,28 +19,28 @@ export const AddMarkerOnClick = ({
 
 export const FitBoundsOnAnswer = ({
   showAnswer,
-  panoramaLocation,
-  guessLocation,
+  locationA,
+  locationB,
 }: {
   showAnswer: boolean;
-  panoramaLocation: LatLngTuple;
-  guessLocation: LatLngTuple | null;
+  locationA: LatLngTuple;
+  locationB: LatLngTuple | null;
 }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (showAnswer && panoramaLocation && guessLocation) {
-      map.fitBounds([panoramaLocation, guessLocation], {
+    if (showAnswer && locationA && locationB) {
+      map.fitBounds([locationA, locationB], {
         padding: [80, 80],
         duration: 1,
       });
-    } else if (showAnswer && panoramaLocation) {
-      map.fitBounds([panoramaLocation], {
+    } else if (showAnswer && locationA) {
+      map.fitBounds([locationA], {
         duration: 1,
         maxZoom: 1,
       });
     }
-  }, [showAnswer, panoramaLocation, guessLocation, map]);
+  }, [showAnswer, locationA, locationB, map]);
 
   return null;
 };

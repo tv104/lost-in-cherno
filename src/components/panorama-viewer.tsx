@@ -5,7 +5,7 @@ import { useGameStateContext } from "../contexts";
 
 export const PanoramaViewer: React.FC = () => {
   const {
-    panoramas,
+    gameLocations,
     currentRound,
     roundActive,
     isTransitioningRound,
@@ -15,8 +15,8 @@ export const PanoramaViewer: React.FC = () => {
     gameCount,
   } = useGameStateContext();
 
-  const src = panoramas[currentRound - 1].image;
-  const preloadSrc = panoramas[currentRound]?.image;
+  const src = gameLocations[currentRound - 1].image;
+  const preloadSrc = gameLocations[currentRound]?.image;
 
   const commonProps = {
     height: "100vh",
@@ -93,12 +93,7 @@ export const PanoramaViewer: React.FC = () => {
           {...commonProps}
           src={src}
           containerClass="current-pano-img"
-          onReady={() => {
-            console.log(
-              "Panorama ready, calling handleCurrentPanoramicImgReady"
-            );
-            handleCurrentPanoramicImgReady();
-          }}
+          onReady={handleCurrentPanoramicImgReady}
         />
       </Box>
       {preloadSrc && (

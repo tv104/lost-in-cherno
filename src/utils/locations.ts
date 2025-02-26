@@ -22,27 +22,27 @@ export function saveRoundLocation(locationId: string): void {
   }
 }
 
-export function getPanoramasForNewGame(panoramas: LocationConfig[], roundsPerGame: number): LocationConfig[] {
+export function getNewGameLocations(locations: LocationConfig[], roundsPerGame: number): LocationConfig[] {
   let historicalLocations = loadGuessedLocations();
   
-  let unseenPanoramas = panoramas.filter(
-    panorama => !historicalLocations.includes(panorama.id)
+  let unseenLocations = locations.filter(
+    location => !historicalLocations.includes(location.id)
   );
   
-  // If we don't have enough unseen panoramas for a full game,
-  // clear the history and consider all panoramas as unseen
-  if (unseenPanoramas.length < roundsPerGame) {
+  // If we don't have enough unseen locations for a full game,
+  // clear the history and consider all locations as unseen
+  if (unseenLocations.length < roundsPerGame) {
     clearLocationHistory();
     historicalLocations = [];
-    unseenPanoramas = [...panoramas];
+    unseenLocations = [...locations];
 
-    if (unseenPanoramas.length < roundsPerGame) {
-      throw new Error("Not enough panoramas to start a new game");
+    if (unseenLocations.length < roundsPerGame) {
+      throw new Error("Not enough locations to start a new game");
     }
   }
   
-  unseenPanoramas.sort(() => Math.random() - 0.5);
-  return unseenPanoramas.slice(0, roundsPerGame);
+  unseenLocations.sort(() => Math.random() - 0.5);
+  return unseenLocations.slice(0, roundsPerGame);
 }
 
 export function clearLocationHistory(): void {

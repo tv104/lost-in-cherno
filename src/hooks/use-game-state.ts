@@ -3,7 +3,7 @@ import { LatLngTuple } from 'leaflet';
 import { 
   calculateDistance, 
   saveRoundLocation,
-  getPanoramasForNewGame,
+  getNewGameLocations,
 } from '../utils';
 import { useRoundTimer } from './use-round-timer';
 import { GameStateType, GameStateContextType, RoundResult, LocationConfig } from '../types';
@@ -13,7 +13,7 @@ const createInitialState = (allPanoramas: LocationConfig[]): GameStateType => ({
   currentRound: 1,
   gameResults: [],
   phase: 'menu',
-  panoramas: getPanoramasForNewGame(allPanoramas, GAME_CONFIG.ROUNDS_PER_GAME),
+  gameLocations: getNewGameLocations(allPanoramas, GAME_CONFIG.ROUNDS_PER_GAME),
   gameCount: 0,
   
   guessLocation: null,
@@ -29,7 +29,7 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
   );
   
   const { 
-    currentRound, gameResults, phase, panoramas, gameCount,
+    currentRound, gameResults, phase, gameLocations, gameCount,
     guessLocation, roundActive, isTransitioningRound
   } = state;
 
@@ -49,25 +49,25 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
   // Game logic handlers
   const handleRoundEnd = useCallback((timerExpired = false) => {
     const distance = guessLocation
-      ? calculateDistance(guessLocation, panoramas[currentRound - 1].location)
+      ? calculateDistance(guessLocation, gameLocations[currentRound - 1].location)
       : null;
 
     const updatedGameResults: RoundResult[] = [
       ...gameResults,
       {
-        locationId: panoramas[currentRound - 1].id,
+        locationId: gameLocations[currentRound - 1].id,
         distance,
         timeLeft: timerExpired ? 0 : timeLeft,
       },
     ];
 
-    saveRoundLocation(panoramas[currentRound - 1].id);
+    saveRoundLocation(gameLocations[currentRound - 1].id);
     
     updateState({
       gameResults: updatedGameResults,
       roundActive: false
     });
-  }, [panoramas, currentRound, gameResults, guessLocation, timeLeft, updateState]);
+  }, [gameLocations, currentRound, gameResults, guessLocation, timeLeft, updateState]);
 
   const handleStartGame = useCallback(() => {
     updateState({
@@ -81,7 +81,7 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
   }, [updateState]);
 
   const handleGameEnd = useCallback(() => {
-    const newPanoramas = getPanoramasForNewGame(
+    const newLocations = getNewGameLocations(
       allPanoramas,
       GAME_CONFIG.ROUNDS_PER_GAME
     );
@@ -89,7 +89,7 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
     updateState({
       currentRound: 1,
       phase: 'results',
-      panoramas: newPanoramas,
+      gameLocations: newLocations,
       gameCount: gameCount + 1,
       guessLocation: null,
       roundActive: false,

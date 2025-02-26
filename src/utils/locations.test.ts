@@ -1,14 +1,14 @@
 import { 
     loadGuessedLocations, 
     saveRoundLocation, 
-    getPanoramasForNewGame, 
+    getNewGameLocations, 
     clearLocationHistory,
     GUESSED_LOCATIONS_STORAGE_KEY
-  } from './panoramas';
+  } from './locations';
   import { LocationConfig } from '../types';
 
-  describe('panoramas utilities', () => {
-    const samplePanoramas: LocationConfig[] = [
+  describe('location utilities', () => {
+    const sampleLocationConfigs: LocationConfig[] = [
       { id: 'loc1', image: 'image1.jpg', location: [51.5, -0.1] },
       { id: 'loc2', image: 'image2.jpg', location: [40.7, -74.0] },
       { id: 'loc3', image: 'image3.jpg', location: [35.7, 139.8] },
@@ -95,29 +95,29 @@ import {
       });
     });
   
-    describe('getPanoramasForNewGame', () => {
-      it('should return the requested number of unseen panoramas', () => {
+    describe('getNewGameLocations', () => {
+      it('should return the requested number of unseen locations', () => {
         localStorageMock[GUESSED_LOCATIONS_STORAGE_KEY] = JSON.stringify(['loc1']);
         
-        const result = getPanoramasForNewGame(samplePanoramas, 2);
+        const result = getNewGameLocations(sampleLocationConfigs, 2);
         
         expect(result.length).toBe(2);
         expect(result.some(p => p.id === 'loc1')).toBe(false);
       });
   
-      it('should clear history when not enough unseen panoramas are available', () => {
+      it('should clear history when not enough unseen locations are available', () => {
         localStorageMock[GUESSED_LOCATIONS_STORAGE_KEY] = JSON.stringify(['loc1', 'loc2', 'loc3', 'loc4']);
         
-        const result = getPanoramasForNewGame(samplePanoramas, 3);
+        const result = getNewGameLocations(sampleLocationConfigs, 3);
         
         expect(result.length).toBe(3);
         expect(localStorage.removeItem).toHaveBeenCalledWith(GUESSED_LOCATIONS_STORAGE_KEY);
       });
   
-      it('should throw an error when not enough panoramas exist for a game', () => {
+      it('should throw an error when not enough locations exist for a game', () => {
         expect(() => {
-          getPanoramasForNewGame(samplePanoramas.slice(0, 2), 3);
-        }).toThrow('Not enough panoramas to start a new game');
+          getNewGameLocations(sampleLocationConfigs.slice(0, 2), 3);
+        }).toThrow('Not enough locations to start a new game');
       });
     });
   

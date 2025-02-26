@@ -23,7 +23,7 @@ export const GuessMap: React.FC = () => {
   const {
     guessLocation,
     handleSetGuessLocation,
-    panoramas,
+    gameLocations,
     currentRound,
     showAnswer,
     handleMapButtonClick,
@@ -34,7 +34,7 @@ export const GuessMap: React.FC = () => {
     gameCount,
   } = useGameStateContext();
 
-  const panoramaLocation = panoramas[currentRound - 1].location;
+  const roundLocation = gameLocations[currentRound - 1].location;
   const [isExpanded, setIsExpanded] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
 
@@ -98,20 +98,18 @@ export const GuessMap: React.FC = () => {
             />
             <FitBoundsOnAnswer
               showAnswer={showAnswer}
-              panoramaLocation={panoramaLocation}
-              guessLocation={guessLocation}
+              locationA={roundLocation}
+              locationB={guessLocation}
             />
             <ZoomOutOnTransition
               transitioning={isTransitioningRound}
               gameCount={gameCount}
             />
             {guessLocation && <Marker position={guessLocation} />}
-            {showAnswer && guessLocation && panoramaLocation && (
-              <Polyline positions={[panoramaLocation, guessLocation]} />
+            {showAnswer && guessLocation && (
+              <Polyline positions={[roundLocation, guessLocation]} />
             )}
-            {showAnswer && panoramaLocation && (
-              <Marker position={panoramaLocation} />
-            )}
+            {showAnswer && <Marker position={roundLocation} />}
           </MapContainer>
 
           <GuessMapButton
