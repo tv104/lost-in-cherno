@@ -8,7 +8,7 @@ export const formatRoundResult = (distance: number | null, timeLeft: number): st
   if (distance === null) {
     return getRandomDeathMessage();
   }
-  
+
   const formattedTime = (timeLeft).toFixed(3) + 's';
   return `${Math.round(distance).toLocaleString()} ${getRandomDistanceItem(distance)} away with ${formattedTime} remaining`;
 };
@@ -28,12 +28,12 @@ export const formatGameResults = (gameResults: RoundResult[]): FormattedRoundRes
 export const getScoreHeadingMessage = (finalScore: number): string => {
   const highScore = getHighScore();
   const isNewHighScore = finalScore >= highScore;
-  
+
   if (isNewHighScore) {
     updateHighScore(finalScore);
     return `New High Score! ${finalScore.toLocaleString()}`;
   }
-  
+
   return `Score: ${finalScore.toLocaleString()} (Max: ${highScore.toLocaleString()})`;
 };
 
@@ -42,7 +42,7 @@ export const getResultMessage = (
   roundLocation: LatLngTuple
 ) => {
   if (!guessLocation) {
-    return `You are dead`;
+    return getRandomDeathMessage();
   }
 
   const distance = Math.round(
