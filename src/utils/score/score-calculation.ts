@@ -1,4 +1,4 @@
-import { RoundResult } from "../game";
+import { RoundResult } from "../../types";
 
 const BASE_POINTS = 10000;
 

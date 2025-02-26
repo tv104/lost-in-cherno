@@ -2,33 +2,14 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { LatLngTuple } from 'leaflet';
 import { 
   calculateDistance, 
-  GAME_CONFIG, 
   saveRoundLocation,
   getPanoramasForNewGame,
-  type PanoramaConfig,
-  type RoundResult
 } from '../utils';
 import { useRoundTimer } from './use-round-timer';
+import { GameStateType, GameStateContextType, RoundResult, LocationConfig } from '../types';
+import { GAME_CONFIG } from '../config';
 
-type GamePhase = 'menu' | 'game' | 'results';
-
-type GameStateType = {
-  // Game state
-  currentRound: number;
-  gameResults: RoundResult[];
-  phase: GamePhase;
-  panoramas: PanoramaConfig[];
-  gameCount: number;
-  
-  // Round state
-  guessLocation: LatLngTuple | null;
-  roundActive: boolean;
-  firstRoundReady: boolean;
-  nextRoundReady: boolean;
-  isTransitioningRound: boolean;
-};
-
-const createInitialState = (allPanoramas: PanoramaConfig[]): GameStateType => ({
+const createInitialState = (allPanoramas: LocationConfig[]): GameStateType => ({
   currentRound: 1,
   gameResults: [],
   phase: 'menu',
@@ -42,7 +23,7 @@ const createInitialState = (allPanoramas: PanoramaConfig[]): GameStateType => ({
   isTransitioningRound: false,
 });
 
-export function useGameState(allPanoramas: PanoramaConfig[]) {
+export function useGameState(allPanoramas: LocationConfig[]): GameStateContextType {
   const [state, setState] = useState<GameStateType>(() => 
     createInitialState(allPanoramas)
   );
@@ -51,7 +32,7 @@ export function useGameState(allPanoramas: PanoramaConfig[]) {
     currentRound, gameResults, phase, panoramas, gameCount,
     guessLocation, roundActive, isTransitioningRound
   } = state;
-  
+
   const { timeLeft, resetTimer } = useRoundTimer({
     initialTime: GAME_CONFIG.SECONDS_PER_ROUND,
     isActive: roundActive,
@@ -59,7 +40,10 @@ export function useGameState(allPanoramas: PanoramaConfig[]) {
   });
   
   const updateState = useCallback((updates: Partial<GameStateType>) => {
-    setState(prev => ({ ...prev, ...updates }));
+    setState(prev => {
+      const newState = { ...prev, ...updates };
+      return newState;
+    });
   }, []);
 
   // Game logic handlers
@@ -218,7 +202,6 @@ export function useGameState(allPanoramas: PanoramaConfig[]) {
   return {
     // State
     ...state,
-    timeLeft,
     
     // Handlers
     resetTimer,
@@ -236,6 +219,9 @@ export function useGameState(allPanoramas: PanoramaConfig[]) {
     // Computed values
     disableMapButton,
     disableMapMarker,
-    showAnswer
+    showAnswer,
+
+    // Time state
+    timeLeft,
   };
 }

@@ -3,12 +3,12 @@ import {
     saveRoundLocation, 
     getPanoramasForNewGame, 
     clearLocationHistory,
-    PanoramaConfig,
     GUESSED_LOCATIONS_STORAGE_KEY
   } from './panoramas';
-  
+  import { LocationConfig } from '../types';
+
   describe('panoramas utilities', () => {
-    const samplePanoramas: PanoramaConfig[] = [
+    const samplePanoramas: LocationConfig[] = [
       { id: 'loc1', image: 'image1.jpg', location: [51.5, -0.1] },
       { id: 'loc2', image: 'image2.jpg', location: [40.7, -74.0] },
       { id: 'loc3', image: 'image3.jpg', location: [35.7, 139.8] },

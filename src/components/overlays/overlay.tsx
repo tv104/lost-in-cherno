@@ -61,6 +61,7 @@ export const Overlay: React.FC<Props> = ({ children, isExiting, onExited }) => {
       }
 
       timerRef.current = setTimeout(() => {
+        console.log("Overlay is exiting, calling onExited");
         onExited();
         isTransitioning.current = false;
       }, TRANSITION_DURATION);

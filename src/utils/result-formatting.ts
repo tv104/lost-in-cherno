@@ -1,6 +1,6 @@
 import { calculateDistance, getRandomDistanceItem } from "./distance";
 import { getRandomDeathMessage } from "./death-messages";
-import { RoundResult } from "./game";
+import { RoundResult } from "../types";
 import { getHighScore, updateHighScore } from "./score/high-score";
 import { LatLngTuple } from "leaflet";
 

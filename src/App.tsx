@@ -1,4 +1,4 @@
-import { panoramas as allPanoramas } from "./locations/chernarus/config";
+import { locationConfigs as chernarusLocationConfigs } from "./config/locations";
 import AudioPlayer from "./components/audio-player";
 import { GuessMap } from "./components/guess-map";
 import { PanoramaViewer } from "./components/panorama-viewer";
@@ -8,7 +8,7 @@ import {
   ResultsScreen,
   MenuScreen,
 } from "./components/overlays";
-import { useGameState } from "./hooks";
+import { GameStateProvider, useGameStateContext } from "./contexts";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -19,77 +19,22 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 function App() {
-  const {
-    // State
-    currentRound,
-    gameResults,
-    phase,
-    panoramas,
-    gameCount,
-    guessLocation,
-    roundActive,
-    firstRoundReady,
-    isTransitioningRound,
-    timeLeft,
-    showAnswer,
+  return (
+    <GameStateProvider locationConfigs={chernarusLocationConfigs}>
+      <AppContent />
+    </GameStateProvider>
+  );
+}
 
-    // Handlers
-    handleSetGuessLocation,
-    handleCurrentPanoramicImgReady,
-    handleNextPanoramicImgReady,
-    handleMapButtonClick,
-    handlePanoramaTransitionEnd,
-    handleStartGame,
-
-    // Computed values
-    disableMapButton,
-    disableMapMarker,
-  } = useGameState(allPanoramas);
-
+function AppContent() {
+  const { phase } = useGameStateContext();
   return (
     <Box sx={styles.container}>
-      {phase === "menu" && (
-        <MenuScreen
-          disableStartButton={!firstRoundReady}
-          onStartGame={handleStartGame}
-        />
-      )}
-      {phase === "results" && (
-        <ResultsScreen
-          disableStartButton={!firstRoundReady}
-          gameResults={gameResults}
-          onStartGame={handleStartGame}
-        />
-      )}
-      <GuessMap
-        currentRound={currentRound}
-        timeLeft={timeLeft}
-        guessLocation={guessLocation}
-        setGuessLocation={handleSetGuessLocation}
-        panoramaLocation={panoramas[currentRound - 1].location}
-        showAnswer={showAnswer}
-        onMapButtonClick={handleMapButtonClick}
-        mapButtonDisabled={disableMapButton}
-        mapMarkerDisabled={disableMapMarker}
-        isTransitioningRound={isTransitioningRound}
-        gameCount={gameCount}
-      />
-      <PanoramaViewer
-        src={panoramas[currentRound - 1].image}
-        preloadSrc={panoramas[currentRound]?.image}
-        onCurrentReady={handleCurrentPanoramicImgReady}
-        onNextReady={handleNextPanoramicImgReady}
-        roundActive={roundActive}
-        isTransitioningRound={isTransitioningRound}
-        onTransitionEnd={handlePanoramaTransitionEnd}
-        gameCount={gameCount}
-      />
-      {showAnswer && (
-        <RoundResultMessage
-          guessLocation={guessLocation}
-          panoramaLocation={panoramas[currentRound - 1].location}
-        />
-      )}
+      {phase === "menu" && <MenuScreen />}
+      {phase === "results" && <ResultsScreen />}
+      <GuessMap />
+      <PanoramaViewer />
+      <RoundResultMessage />
       <AudioPlayer />
     </Box>
   );

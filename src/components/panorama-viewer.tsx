@@ -1,28 +1,23 @@
-import { ComponentProps, useRef, useCallback, useLayoutEffect } from "react";
+import { useRef, useCallback, useLayoutEffect } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 import { Box, ThemeUIStyleObject } from "theme-ui";
+import { useGameStateContext } from "../contexts";
 
-type Props = {
-  src: ComponentProps<typeof ReactPhotoSphereViewer>["src"];
-  preloadSrc?: ComponentProps<typeof ReactPhotoSphereViewer>["src"];
-  onCurrentReady: () => void;
-  onNextReady: () => void;
-  roundActive: boolean;
-  isTransitioningRound: boolean;
-  onTransitionEnd: () => void;
-  gameCount: number;
-};
+export const PanoramaViewer: React.FC = () => {
+  const {
+    panoramas,
+    currentRound,
+    roundActive,
+    isTransitioningRound,
+    handleCurrentPanoramicImgReady,
+    handleNextPanoramicImgReady,
+    handlePanoramaTransitionEnd,
+    gameCount,
+  } = useGameStateContext();
 
-export const PanoramaViewer: React.FC<Props> = ({
-  src,
-  preloadSrc,
-  onCurrentReady,
-  onNextReady,
-  roundActive,
-  isTransitioningRound,
-  onTransitionEnd,
-  gameCount,
-}) => {
+  const src = panoramas[currentRound - 1].image;
+  const preloadSrc = panoramas[currentRound]?.image;
+
   const commonProps = {
     height: "100vh",
     width: "100%",
@@ -35,7 +30,7 @@ export const PanoramaViewer: React.FC<Props> = ({
   const currentImageRef = useRef<HTMLDivElement>(null);
 
   const handleTransitionEnd = useCallback(() => {
-    onTransitionEnd();
+    handlePanoramaTransitionEnd();
 
     if (containerRef.current) {
       containerRef.current.style.willChange = "auto";
@@ -43,7 +38,7 @@ export const PanoramaViewer: React.FC<Props> = ({
     if (currentImageRef.current) {
       currentImageRef.current.style.willChange = "auto";
     }
-  }, [onTransitionEnd]);
+  }, [handlePanoramaTransitionEnd]);
 
   // Apply willChange before transitions start
   useLayoutEffect(() => {
@@ -98,7 +93,12 @@ export const PanoramaViewer: React.FC<Props> = ({
           {...commonProps}
           src={src}
           containerClass="current-pano-img"
-          onReady={onCurrentReady}
+          onReady={() => {
+            console.log(
+              "Panorama ready, calling handleCurrentPanoramicImgReady"
+            );
+            handleCurrentPanoramicImgReady();
+          }}
         />
       </Box>
       {preloadSrc && (
@@ -110,7 +110,7 @@ export const PanoramaViewer: React.FC<Props> = ({
             {...commonProps}
             src={preloadSrc}
             containerClass="next-pano-img"
-            onReady={onNextReady}
+            onReady={handleNextPanoramicImgReady}
           />
         </Box>
       )}

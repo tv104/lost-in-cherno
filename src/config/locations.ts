@@ -33,9 +33,9 @@ import image7 from './panoramas/7.webp'
 import image8 from './panoramas/8.webp'
 import image9 from './panoramas/9.webp'
 
-import { PanoramaConfig } from '../../utils/panoramas'
+import { LocationConfig } from '../types'
 
-export const panoramas: PanoramaConfig[] = [
+export const locationConfigs: LocationConfig[] = [
     { id: "1", image: image1, location: [0, 0] },
     { id: "6", image: image6, location: [0, 0] }, 
     { id: "7", image: image7, location: [0, 0] }, 

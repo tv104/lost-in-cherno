@@ -1,10 +1,4 @@
-import { LatLngTuple } from 'leaflet'
-
-export type PanoramaConfig = {
-    id: string;
-    image: string;
-    location: LatLngTuple;
-}
+import { LocationConfig } from '../types'
 
 export const GUESSED_LOCATIONS_STORAGE_KEY = "guessed_locations_history";
 
@@ -28,7 +22,7 @@ export function saveRoundLocation(locationId: string): void {
   }
 }
 
-export function getPanoramasForNewGame(panoramas: PanoramaConfig[], roundsPerGame: number): PanoramaConfig[] {
+export function getPanoramasForNewGame(panoramas: LocationConfig[], roundsPerGame: number): LocationConfig[] {
   let historicalLocations = loadGuessedLocations();
   
   let unseenPanoramas = panoramas.filter(

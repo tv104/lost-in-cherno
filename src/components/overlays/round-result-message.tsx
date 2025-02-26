@@ -1,13 +1,8 @@
 import { ThemeUIStyleObject } from "theme-ui";
 import { Heading } from "theme-ui";
-import { LatLngTuple } from "leaflet";
 import { getResultMessage } from "../../utils";
 import { useMemo } from "react";
-
-type RoundResultMessageProps = {
-  guessLocation: LatLngTuple | null;
-  panoramaLocation: LatLngTuple;
-};
+import { useGameStateContext } from "../../contexts";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -27,14 +22,20 @@ const styles: Record<string, ThemeUIStyleObject> = {
   },
 };
 
-export const RoundResultMessage: React.FC<RoundResultMessageProps> = ({
-  guessLocation,
-  panoramaLocation,
-}) => {
+export const RoundResultMessage: React.FC = () => {
+  const { guessLocation, panoramas, currentRound, showAnswer } =
+    useGameStateContext();
+
+  const panoramaLocation = panoramas[currentRound - 1].location;
+
   const message = useMemo(
     () => getResultMessage(guessLocation, panoramaLocation),
     [guessLocation, panoramaLocation]
   );
+
+  if (!showAnswer) {
+    return null;
+  }
 
   return (
     <Heading sx={styles.container} as="h1">

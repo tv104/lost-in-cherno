@@ -1,5 +1,5 @@
 import { calculateRoundScore, calculateTotalScore } from './score-calculation';
-import { RoundResult } from '../game';
+import { RoundResult } from '../../types';
 
 describe('Score Calculation Utilities', () => {
   describe('calculateRoundScore', () => {

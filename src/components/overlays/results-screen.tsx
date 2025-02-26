@@ -4,15 +4,9 @@ import {
   calculateTotalScore,
   formatGameResults,
   getScoreHeadingMessage,
-  type RoundResult,
 } from "../../utils";
 import { useState, useMemo } from "react";
-
-type Props = {
-  disableStartButton: boolean;
-  gameResults: RoundResult[];
-  onStartGame: () => void;
-};
+import { useGameStateContext } from "../../contexts";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   rounds: {
@@ -22,13 +16,15 @@ const styles: Record<string, ThemeUIStyleObject> = {
   },
 };
 
-export const ResultsScreen: React.FC<Props> = ({
-  disableStartButton,
-  gameResults,
-  onStartGame,
-}) => {
+export const ResultsScreen: React.FC = () => {
+  const { handleStartGame, firstRoundReady, gameResults } =
+    useGameStateContext();
   const [isExiting, setIsExiting] = useState(false);
-  const finalScore = calculateTotalScore(gameResults);
+
+  const finalScore = useMemo(
+    () => calculateTotalScore(gameResults),
+    [gameResults]
+  );
 
   const headingMsg = useMemo(
     () => getScoreHeadingMessage(finalScore),
@@ -41,7 +37,7 @@ export const ResultsScreen: React.FC<Props> = ({
   );
 
   return (
-    <Overlay isExiting={isExiting} onExited={onStartGame}>
+    <Overlay isExiting={isExiting} onExited={handleStartGame}>
       <Heading>{headingMsg}</Heading>
       <Box sx={styles.rounds}>
         {formattedResults.map(({ round, result }) => (
@@ -50,7 +46,7 @@ export const ResultsScreen: React.FC<Props> = ({
           </Text>
         ))}
       </Box>
-      <Button disabled={disableStartButton} onClick={() => setIsExiting(true)}>
+      <Button disabled={!firstRoundReady} onClick={() => setIsExiting(true)}>
         Play Again
       </Button>
     </Overlay>

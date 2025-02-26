@@ -1,10 +1,11 @@
 import { renderHook, act } from '@testing-library/react';
 import { useGameState } from './use-game-state';
-import { GAME_CONFIG, PanoramaConfig } from '../utils';
+import { GAME_CONFIG } from '../config';
+import { LocationConfig } from '../types';
 import { LatLngTuple } from 'leaflet';
 
 describe('useGameState', () => {
-  const mockPanoramas: PanoramaConfig[] = [
+  const mockPanoramas: LocationConfig[] = [
     { id: 'loc1', location: [40.7128, -74.0060], image: 'img1.jpg' },
     { id: 'loc2', location: [34.0522, -118.2437], image: 'img2.jpg' },
     { id: 'loc3', location: [51.5074, -0.1278], image: 'img3.jpg' },
