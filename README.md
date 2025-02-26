@@ -1,6 +1,6 @@
 # Lost in Cherno | DayZ GeoGuessr
 
-<video src="public/gameplay.webm" alt="Lost in Cherno Gameplay" width="640" autoplay loop muted></video>
+[gameplay.webm](https://github.com/user-attachments/assets/3cfe999a-ff12-4e2c-ba0d-55d09971afc1)
 
 - A frontend prototype
 - Over 30 Chernarus locations
