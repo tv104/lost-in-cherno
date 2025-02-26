@@ -49,9 +49,11 @@ export const GuessMapLocationLabels: React.FC = () => {
 
     if (zoom <= minZoom) {
       return label.importance === 3;
+    } else if (zoom === minZoom + 1) {
+      return label.importance >= 2;
+    } else {
+      return true;
     }
-
-    return true;
   });
 
   return (

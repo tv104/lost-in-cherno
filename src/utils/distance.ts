@@ -9,7 +9,7 @@ export const smallDistanceItems = [
   "screwdrivers", "pistol mags",
   "canteens", "radios", "compasses", "tapes",  
   "handcuffs", "bandages",  
-  "beans", "potatoes", "flares"
+  "bean cans", "potatoes", "flares"
 ];
 
 export const getRandomDistanceItem = (distance: number): string => {
