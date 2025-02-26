@@ -5,7 +5,7 @@
 - A frontend prototype
 - Over 30 Chernarus locations
 - Lacks touch/mobile support
-- Deployed on [GitHub Pages](https://tv104.github.com/lost-in-cherno/)
+- Deployed on [GitHub Pages](https://tv104.github.io/lost-in-cherno/)
 - Under development until I get bored
 
 ## Development
