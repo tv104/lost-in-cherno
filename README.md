@@ -1,12 +1,12 @@
-# Lost in Cherno
+# Lost in Cherno | DayZ GeoGuessr
 
-<img src="src/components/logo/logo.webp" alt="Lost in Cherno" width="360">
+<video src="public/gameplay.webm" alt="Lost in Cherno Gameplay" width="640" autoplay loop muted></video>
 
-## A front-end prototype for a DayZ GeoGuessr
-
-- Currently limited to ~30 locations on Chernarus
-- Desktop only (you're welcome to add touch support)
+- A frontend prototype
+- Over 30 Chernarus locations
+- Lacks touch/mobile support
 - Under development until I get bored
+<!-- - [Deployed on GH pages](#) -->
 
 ## Development
 
@@ -43,16 +43,13 @@ Get-ChildItem -Path . -Filter *.png -Recurse | Remove-Item -Force
 Screenshots taken ingame - best to use freecam mode to avoid character movements and shadows.
 I used [Hugin - Panoramo editor](https://hugin.sourceforge.io/) to stitch them together.
 
-## Credits
+## Contributions & License
 
-This project would not have been possible without the following things and more
+Contributions in the form of enhancements, new locations, and maps are welcomed. This project is open source and you're free to modify it, but for any commercial applications please reach out (see [LICENSE.md](LICENSE.md)).
 
-- [DayZ](https://dayz.com/) by Bohemia Interactive
-- [Satellite map](https://dayz.ginfo.gg/) by iZurvive
+This project would not have been possible without the following things and [more](./package.json)
+
+- [DayZ](https://dayz.com) by Bohemia Interactive
+- [DayZ Satellite map](https://dayz.ginfo.gg/) by iZurvive
 - [iZurvive map downloader](https://github.com/Samg381/DayZ-Map-DL) by Samg381
-- [Hugin](https://hugin.sourceforge.io/) for panorama stitching
-- [ImageMagick](https://imagemagick.org/) for image compression
-- [GDAL](https://gdal.org/) for tile generation
-- [Leaflet.js](https://leafletjs.com/) for map library
 - [Suno](https://suno.com/) for generated background music
-- [Flux](https://flux1ai.com/) for generated logo
