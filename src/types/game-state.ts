@@ -12,6 +12,7 @@ export type LocationConfig = {
   id: string;
   image: string;
   location: LatLngTuple;
+  panCorrection: number;
 }
 
 export interface GameStateType {

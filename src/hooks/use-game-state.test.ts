@@ -6,14 +6,14 @@ import { LatLngTuple } from 'leaflet';
 
 describe('useGameState', () => {
   const mockLocationConfigs: LocationConfig[] = [
-    { id: 'loc1', location: [40.7128, -74.0060], image: 'img1.jpg' },
-    { id: 'loc2', location: [34.0522, -118.2437], image: 'img2.jpg' },
-    { id: 'loc3', location: [51.5074, -0.1278], image: 'img3.jpg' },
-    { id: 'loc4', location: [48.8566, 2.3522], image: 'img4.jpg' },
-    { id: 'loc5', location: [40.7128, -74.0060], image: 'img1.jpg' },
-    { id: 'loc6', location: [34.0522, -118.2437], image: 'img2.jpg' },
-    { id: 'loc7', location: [51.5074, -0.1278], image: 'img3.jpg' },
-    { id: 'loc8', location: [48.8566, 2.3522], image: 'img4.jpg' },
+    { id: 'loc1', location: [40.7128, -74.0060], image: 'img1.jpg', panCorrection: 0 },
+    { id: 'loc2', location: [34.0522, -118.2437], image: 'img2.jpg', panCorrection: 0 },
+    { id: 'loc3', location: [51.5074, -0.1278], image: 'img3.jpg', panCorrection: 0 },
+    { id: 'loc4', location: [48.8566, 2.3522], image: 'img4.jpg', panCorrection: 0 },
+    { id: 'loc5', location: [40.7128, -74.0060], image: 'img1.jpg', panCorrection: 0 },
+    { id: 'loc6', location: [34.0522, -118.2437], image: 'img2.jpg', panCorrection: 0 },
+    { id: 'loc7', location: [51.5074, -0.1278], image: 'img3.jpg', panCorrection: 0 },
+    { id: 'loc8', location: [48.8566, 2.3522], image: 'img4.jpg', panCorrection: 0 },
   ];
 
   it('should initialize with correct default state', () => {

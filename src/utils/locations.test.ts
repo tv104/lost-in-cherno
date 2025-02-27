@@ -9,11 +9,11 @@ import {
 
   describe('location utilities', () => {
     const sampleLocationConfigs: LocationConfig[] = [
-      { id: 'loc1', image: 'image1.jpg', location: [51.5, -0.1] },
-      { id: 'loc2', image: 'image2.jpg', location: [40.7, -74.0] },
-      { id: 'loc3', image: 'image3.jpg', location: [35.7, 139.8] },
-      { id: 'loc4', image: 'image4.jpg', location: [48.9, 2.3] },
-      { id: 'loc5', image: 'image5.jpg', location: [37.8, -122.4] },
+      { id: 'loc1', image: 'image1.jpg', location: [51.5, -0.1], panCorrection: 0 },
+      { id: 'loc2', image: 'image2.jpg', location: [40.7, -74.0], panCorrection: 0 },
+      { id: 'loc3', image: 'image3.jpg', location: [35.7, 139.8], panCorrection: 0 },
+      { id: 'loc4', image: 'image4.jpg', location: [48.9, 2.3], panCorrection: 0 },
+      { id: 'loc5', image: 'image5.jpg', location: [37.8, -122.4], panCorrection: 0 },
     ];
   
     let localStorageMock: { [key: string]: string } = {};

@@ -1,7 +1,9 @@
-import { useRef, useCallback, useLayoutEffect } from "react";
+import { useRef, useCallback, useLayoutEffect, ComponentProps } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 import { Box, ThemeUIStyleObject } from "theme-ui";
 import { useGameStateContext } from "../contexts";
+import "@photo-sphere-viewer/compass-plugin/index.css";
+import { CompassPlugin } from "@photo-sphere-viewer/compass-plugin";
 
 export const PanoramaViewer: React.FC = () => {
   const {
@@ -18,12 +20,22 @@ export const PanoramaViewer: React.FC = () => {
   const src = gameLocations[currentRound - 1].image;
   const preloadSrc = gameLocations[currentRound]?.image;
 
-  const commonProps = {
+  const commonProps: Partial<ComponentProps<typeof ReactPhotoSphereViewer>> = {
     height: "100vh",
     width: "100%",
     // littlePlanet: true, // TODO hardmode combined with other visual effects
     navbar: false,
     hideNavbarButton: true,
+    plugins: [
+      [
+        CompassPlugin,
+        {
+          position: "top center",
+          navigation: false,
+          size: "120px",
+        },
+      ],
+    ],
   };
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,9 +103,13 @@ export const PanoramaViewer: React.FC = () => {
       >
         <ReactPhotoSphereViewer
           {...commonProps}
+          height={commonProps.height || "100%"}
           src={src}
           containerClass="current-pano-img"
           onReady={handleCurrentPanoramicImgReady}
+          sphereCorrection={{
+            pan: gameLocations[currentRound - 1].panCorrection,
+          }}
         />
       </Box>
       {preloadSrc && (
@@ -103,9 +119,13 @@ export const PanoramaViewer: React.FC = () => {
         >
           <ReactPhotoSphereViewer
             {...commonProps}
+            height={commonProps.height || "100%"}
             src={preloadSrc}
             containerClass="next-pano-img"
             onReady={handleNextPanoramicImgReady}
+            sphereCorrection={{
+              pan: gameLocations[currentRound].panCorrection,
+            }}
           />
         </Box>
       )}
