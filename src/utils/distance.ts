@@ -7,7 +7,7 @@ export const largeDistanceItems = [
 
 export const smallDistanceItems = [
   "screwdrivers", "pistol mags",
-  "canteens", "radios", "compasses", "tapes",  
+  "canteens", "radios", "compasses", "duct tapes",  
   "handcuffs", "bandages",  
   "bean cans", "potatoes", "flares"
 ];

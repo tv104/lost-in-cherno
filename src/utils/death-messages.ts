@@ -6,7 +6,7 @@ export const DAYZ_DEATH_MESSAGES = [
   "Stepped on a landmine",
   "Server got DDOSed",
   "Drank pond water",
-  "Run over by own vehicle",
+  "Got run over by own vehicle",
   "Ate rotten fruit",
   "Got stuck in queue",
   "No message received (connection lost)",
