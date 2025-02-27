@@ -51,20 +51,20 @@ export const Footer = ({ sx }: Props) => {
         DayZ
       </Link>
       <Link
+        href="https://dayz.ginfo.gg/"
+        sx={styles.link}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        2D map by iZurvive
+      </Link>
+      <Link
         href="https://suno.com/"
         sx={styles.link}
         target="_blank"
         rel="noopener noreferrer"
       >
         Music by Suno
-      </Link>
-      <Link
-        href="https://dayz.ginfo.gg/"
-        sx={styles.link}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        2D map by iSurvive
       </Link>
     </Box>
   );
