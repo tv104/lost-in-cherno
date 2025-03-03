@@ -13,6 +13,8 @@ describe('useGameState', () => {
     { id: 'loc6', location: [34.0522, -118.2437], image: 'img2.jpg', panCorrection: 0 },
     { id: 'loc7', location: [51.5074, -0.1278], image: 'img3.jpg', panCorrection: 0 },
     { id: 'loc8', location: [48.8566, 2.3522], image: 'img4.jpg', panCorrection: 0 },
+    { id: 'loc9', location: [40.7128, -74.0060], image: 'img1.jpg', panCorrection: 0 },
+    { id: 'loc10', location: [34.0522, -118.2437], image: 'img2.jpg', panCorrection: 0 },
   ];
 
   const mockMapLabels: MapLabel[] = [
@@ -126,6 +128,54 @@ describe('useGameState', () => {
     expect(result.current.phase).toBe('results');
     expect(result.current.gameResults.length).toBe(mockGameConfig.maxRounds);
     expect(result.current.currentRound).toBe(1); 
+    expect(result.current.gameCount).toBe(1);
+  });
+
+  it('should generate unique locations for each new game', () => {
+    const { result } = renderHook(() => useGameState(mockGameConfig));
+    
+    act(() => {
+      result.current.handleStartGame();
+    });
+    
+    const firstGameLocations = [...result.current.gameLocations];
+    
+    for (let i = 0; i < mockGameConfig.maxRounds; i++) {
+      act(() => {
+        result.current.handleSetGuessLocation([42.3601, -71.0589]);
+        result.current.handleRoundEnd();
+      });
+      
+      if (i < mockGameConfig.maxRounds - 1) {
+        act(() => {
+          result.current.handleTransitionToNextRound();
+          result.current.handlePanoramaTransitionEnd();
+        });
+      }
+    }
+    
+    act(() => {
+      result.current.handleGameEnd();
+    });
+    
+    // Start a new game
+    act(() => {
+      result.current.handleStartGame();
+    });
+    
+    const secondGameLocations = [...result.current.gameLocations];
+    expect(secondGameLocations).not.toEqual(firstGameLocations);
+    
+    // Check that the locations are unique by comparing their IDs
+    const firstGameIds = firstGameLocations.map(loc => loc.id);
+    const secondGameIds = secondGameLocations.map(loc => loc.id);
+    
+    const hasOverlap = secondGameIds.some(id => firstGameIds.includes(id));
+    expect(hasOverlap).toBe(false);
+    
+    expect(result.current.phase).toBe('game');
+    expect(result.current.currentRound).toBe(1);
+    expect(result.current.gameResults).toEqual([]);
     expect(result.current.gameCount).toBe(1);
   });
 });

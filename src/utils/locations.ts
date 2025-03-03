@@ -22,8 +22,14 @@ export function saveRoundLocation(locationId: string): void {
   }
 }
 
-export function getNewGameLocations(locations: LocationConfig[], roundsPerGame: number): LocationConfig[] {
+export function getNewGameLocations(
+  locations: LocationConfig[], 
+  roundsPerGame: number,
+  additionalLocationsToExclude: string[] = []
+): LocationConfig[] {
   let historicalLocations = loadGuessedLocations();
+  
+  historicalLocations = [...new Set([...historicalLocations, ...additionalLocationsToExclude])];
   
   let unseenLocations = locations.filter(
     location => !historicalLocations.includes(location.id)
@@ -33,8 +39,10 @@ export function getNewGameLocations(locations: LocationConfig[], roundsPerGame: 
   // clear the history and consider all locations as unseen
   if (unseenLocations.length < roundsPerGame) {
     clearLocationHistory();
-    historicalLocations = [];
-    unseenLocations = [...locations];
+    historicalLocations = additionalLocationsToExclude;
+    unseenLocations = locations.filter(
+      location => !additionalLocationsToExclude.includes(location.id)
+    );
 
     if (unseenLocations.length < roundsPerGame) {
       throw new Error("Not enough locations to start a new game");

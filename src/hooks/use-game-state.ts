@@ -80,9 +80,12 @@ export function useGameState(gameConfig: GameConfig): GameStateContextType {
   }, [updateState]);
 
   const handleGameEnd = useCallback(() => {
+    const currentGameLocationIds = gameLocations.map(loc => loc.id);
+    
     const newLocations = getNewGameLocations(
-      gameLocations,
-      maxRounds
+      gameConfig.locations,
+      maxRounds,
+      currentGameLocationIds
     );
     
     // prepare state for next game
@@ -98,7 +101,7 @@ export function useGameState(gameConfig: GameConfig): GameStateContextType {
       isTransitioningRound: false,
     });
     resetTimer();
-  }, [gameLocations, maxRounds, gameCount, updateState, resetTimer]);
+  }, [gameConfig.locations, maxRounds, updateState, gameCount, resetTimer, gameLocations]);
 
   const handleSetGuessLocation = useCallback((location: LatLngTuple) => {
     updateState({ guessLocation: location });
