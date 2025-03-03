@@ -1,4 +1,3 @@
-import { locationConfigs as chernarusLocationConfigs } from "./config/chernarus/locations";
 import { AudioPlayer } from "./components/audio-player";
 import { GuessMap } from "./components/guess-map";
 import { PanoramaViewer } from "./components/panorama-viewer";
@@ -8,7 +7,7 @@ import {
   ResultsScreen,
   MenuScreen,
 } from "./components/overlays";
-import { GameStateProvider, useGameStateContext } from "./contexts";
+import { useGameStateContext } from "./contexts";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -19,14 +18,6 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 function App() {
-  return (
-    <GameStateProvider locationConfigs={chernarusLocationConfigs}>
-      <AppContent />
-    </GameStateProvider>
-  );
-}
-
-function AppContent() {
   const { phase } = useGameStateContext();
   return (
     <Box sx={styles.container}>
