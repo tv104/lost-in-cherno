@@ -17,13 +17,13 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 export const ResultsScreen: React.FC = () => {
-  const { handleStartGame, firstRoundReady, gameResults } =
+  const { handleStartGame, firstRoundReady, gameResults, maxTimePerRound } =
     useGameStateContext();
   const [isExiting, setIsExiting] = useState(false);
 
   const finalScore = useMemo(
-    () => calculateTotalScore(gameResults),
-    [gameResults]
+    () => calculateTotalScore(gameResults, maxTimePerRound),
+    [gameResults, maxTimePerRound]
   );
 
   const headingMsg = useMemo(
