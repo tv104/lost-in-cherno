@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useGameState } from './use-game-state';
-import { LocationConfig, GameConfig } from '../types';
+import { LocationConfig, GameConfig, MapLabel } from '../types';
 import { LatLngTuple } from 'leaflet';
 
 describe('useGameState', () => {
@@ -15,10 +15,23 @@ describe('useGameState', () => {
     { id: 'loc8', location: [48.8566, 2.3522], image: 'img4.jpg', panCorrection: 0 },
   ];
 
-  // Create a mock game config for testing
+  const mockMapLabels: MapLabel[] = [
+    {
+      position: [40.7128, -74.0060],
+      name: "Test City 1",
+      importance: 3,
+    },
+    {
+      position: [34.0522, -118.2437],
+      name: "Test City 2",
+      importance: 2,
+    },
+  ];
+
   const mockGameConfig: GameConfig = {
     id: "chernarus",
     locations: mockLocationConfigs,
+    mapLabels: mockMapLabels,
     maxRounds: 5,
     timePerRound: 30
   };

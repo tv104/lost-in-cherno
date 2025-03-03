@@ -1,4 +1,5 @@
 import { locationConfigs as chernarusLocationConfigs } from "./config/chernarus/locations";
+import { mapLabels as chernarusMapLabels } from "./config/chernarus/map-labels";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -13,6 +14,7 @@ import { GameConfig } from "./types";
 const chernarusGameConfig: GameConfig = {
   id: "chernarus",
   locations: chernarusLocationConfigs,
+  mapLabels: chernarusMapLabels,
   maxRounds: 5,
   timePerRound: 30,
 };

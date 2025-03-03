@@ -1,9 +1,9 @@
 import { LayerGroup, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 import { useEffect, useState } from "react";
-import { mapLabels } from "../../config/chernarus/map-labels";
 import { ThemeUIStyleObject } from "theme-ui";
 import { Global } from "theme-ui";
+import { useGameStateContext } from "../../contexts";
 
 const globalStyles: ThemeUIStyleObject = {
   ".map-label": {
@@ -29,6 +29,7 @@ const globalStyles: ThemeUIStyleObject = {
 };
 
 export const GuessMapLocationLabels: React.FC = () => {
+  const { mapLabels } = useGameStateContext();
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
 

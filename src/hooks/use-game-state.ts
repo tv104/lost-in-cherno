@@ -16,7 +16,8 @@ const createInitialState = (config: GameConfig): GameStateType => ({
   mapId: config.id,
   maxRounds: config.maxRounds,
   maxTimePerRound: config.timePerRound,
-
+  mapLabels: config.mapLabels,
+  
   guessLocation: null,
   roundActive: false,
   firstRoundReady: false,
