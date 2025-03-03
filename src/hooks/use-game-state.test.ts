@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useGameState } from './use-game-state';
-import { GAME_CONFIG } from '../config';
-import { LocationConfig } from '../types';
+import { LocationConfig, GameConfig } from '../types';
 import { LatLngTuple } from 'leaflet';
 
 describe('useGameState', () => {
@@ -16,18 +15,27 @@ describe('useGameState', () => {
     { id: 'loc8', location: [48.8566, 2.3522], image: 'img4.jpg', panCorrection: 0 },
   ];
 
+  // Create a mock game config for testing
+  const mockGameConfig: GameConfig = {
+    id: "chernarus",
+    locations: mockLocationConfigs,
+    maxRounds: 5,
+    timePerRound: 30
+  };
+
   it('should initialize with correct default state', () => {
-    const { result } = renderHook(() => useGameState(mockLocationConfigs));
+    const { result } = renderHook(() => useGameState(mockGameConfig));
     
     expect(result.current.phase).toBe('menu');
     expect(result.current.currentRound).toBe(1);
     expect(result.current.gameResults).toEqual([]);
-    expect(result.current.gameLocations.length).toBe(GAME_CONFIG.ROUNDS_PER_GAME);
+    expect(result.current.gameLocations.length).toBe(mockGameConfig.maxRounds);
     expect(result.current.roundActive).toBe(false);
+    expect(result.current.mapId).toBe("chernarus");
   });
 
   it('should start game correctly', () => {
-    const { result } = renderHook(() => useGameState(mockLocationConfigs));
+    const { result } = renderHook(() => useGameState(mockGameConfig));
     
     act(() => {
       result.current.handleStartGame();
@@ -39,7 +47,7 @@ describe('useGameState', () => {
   });
 
   it('should handle setting a guess location', () => {
-    const { result } = renderHook(() => useGameState(mockLocationConfigs));
+    const { result } = renderHook(() => useGameState(mockGameConfig));
     const guessLocation: LatLngTuple = [42.3601, -71.0589];
     
     act(() => {
@@ -50,7 +58,7 @@ describe('useGameState', () => {
   });
 
   it('should transition to next round correctly', () => {
-    const { result } = renderHook(() => useGameState(mockLocationConfigs));
+    const { result } = renderHook(() => useGameState(mockGameConfig));
     
     // Start game, make a guess, end round
     act(() => {
@@ -77,20 +85,20 @@ describe('useGameState', () => {
   });
 
   it('should end game after all rounds are completed', () => {
-    const { result } = renderHook(() => useGameState(mockLocationConfigs));
+    const { result } = renderHook(() => useGameState(mockGameConfig));
     
     act(() => {
       result.current.handleStartGame();
     });
     
     // Complete all rounds
-    for (let i = 0; i < GAME_CONFIG.ROUNDS_PER_GAME; i++) {
+    for (let i = 0; i < mockGameConfig.maxRounds; i++) {
       act(() => {
         result.current.handleSetGuessLocation([42.3601, -71.0589]);
         result.current.handleRoundEnd();
       });
       
-      if (i < GAME_CONFIG.ROUNDS_PER_GAME - 1) {
+      if (i < mockGameConfig.maxRounds - 1) {
         act(() => {
           result.current.handleTransitionToNextRound();
           result.current.handlePanoramaTransitionEnd();
@@ -103,7 +111,7 @@ describe('useGameState', () => {
     });
     
     expect(result.current.phase).toBe('results');
-    expect(result.current.gameResults.length).toBe(GAME_CONFIG.ROUNDS_PER_GAME);
+    expect(result.current.gameResults.length).toBe(mockGameConfig.maxRounds);
     expect(result.current.currentRound).toBe(1); 
     expect(result.current.gameCount).toBe(1);
   });

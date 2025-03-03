@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode } from "react";
 import { useGameState } from "../hooks";
-import { LocationConfig } from "../types";
 import { GameStateContextType } from "../types";
+import { GameConfig } from "../types/game-config";
 
 const GameStateContext = createContext<GameStateContextType | undefined>(
   undefined
@@ -9,12 +9,12 @@ const GameStateContext = createContext<GameStateContextType | undefined>(
 
 export function GameStateProvider({
   children,
-  locationConfigs,
+  gameConfig,
 }: {
   children: ReactNode;
-  locationConfigs: LocationConfig[];
+  gameConfig: GameConfig;
 }) {
-  const gameState = useGameState(locationConfigs);
+  const gameState = useGameState(gameConfig);
 
   return (
     <GameStateContext.Provider value={gameState}>

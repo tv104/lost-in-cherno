@@ -2,7 +2,6 @@ import { Box, Global } from "theme-ui";
 import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import { LatLngBoundsLiteral } from "leaflet";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { GAME_CONFIG } from "../../config";
 import { createStyles, globalStyles } from "./guess-map-styles";
 import {
   AddMarkerOnClick,
@@ -34,6 +33,8 @@ export const GuessMap: React.FC = () => {
     timeLeft,
     isTransitioningRound,
     gameCount,
+    mapId,
+    maxRounds,
   } = useGameStateContext();
 
   const roundLocation = gameLocations[currentRound - 1].location;
@@ -76,7 +77,7 @@ export const GuessMap: React.FC = () => {
             currentRound={
               isTransitioningRound ? currentRound + 1 : currentRound
             }
-            maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
+            maxRounds={maxRounds}
             timeLeft={timeLeft}
             showAnswer={showAnswer}
           />
@@ -91,7 +92,7 @@ export const GuessMap: React.FC = () => {
             wheelPxPerZoomLevel={180}
             maxBoundsViscosity={1.0}
           >
-            <TileLayer url="tiles/chernarus/{z}/{x}/{y}.webp" noWrap={true} />
+            <TileLayer url={`tiles/${mapId}/{z}/{x}/{y}.webp`} noWrap={true} />
             <GuessMapLocationLabels />
             <AddMarkerOnClick
               setLocation={handleSetGuessLocation}
@@ -116,7 +117,7 @@ export const GuessMap: React.FC = () => {
           <GuessMapButton
             showAnswer={showAnswer}
             currentRound={currentRound}
-            maxRounds={GAME_CONFIG.ROUNDS_PER_GAME}
+            maxRounds={maxRounds}
             disabled={disableMapButton}
             onClick={handleMapButtonClick}
           />

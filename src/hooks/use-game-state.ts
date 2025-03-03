@@ -6,16 +6,17 @@ import {
   getNewGameLocations,
 } from '../utils';
 import { useRoundTimer } from './use-round-timer';
-import { GameStateType, GameStateContextType, RoundResult, LocationConfig } from '../types';
-import { GAME_CONFIG } from '../config';
-
-const createInitialState = (allPanoramas: LocationConfig[]): GameStateType => ({
+import { GameStateType, GameStateContextType, RoundResult, GameConfig } from '../types';
+const createInitialState = (config: GameConfig): GameStateType => ({
   currentRound: 1,
   gameResults: [],
   phase: 'menu',
-  gameLocations: getNewGameLocations(allPanoramas, GAME_CONFIG.ROUNDS_PER_GAME),
+  gameLocations: getNewGameLocations(config.locations, config.maxRounds),
   gameCount: 0,
-  
+  mapId: config.id,
+  maxRounds: config.maxRounds,
+  maxTimePerRound: config.timePerRound,
+
   guessLocation: null,
   roundActive: false,
   firstRoundReady: false,
@@ -23,18 +24,18 @@ const createInitialState = (allPanoramas: LocationConfig[]): GameStateType => ({
   isTransitioningRound: false,
 });
 
-export function useGameState(allPanoramas: LocationConfig[]): GameStateContextType {
+export function useGameState(gameConfig: GameConfig): GameStateContextType {
   const [state, setState] = useState<GameStateType>(() => 
-    createInitialState(allPanoramas)
+    createInitialState(gameConfig)
   );
   
   const { 
     currentRound, gameResults, phase, gameLocations, gameCount,
-    guessLocation, roundActive, isTransitioningRound
+    guessLocation, roundActive, isTransitioningRound, maxRounds, maxTimePerRound
   } = state;
 
   const { timeLeft, resetTimer } = useRoundTimer({
-    initialTime: GAME_CONFIG.SECONDS_PER_ROUND,
+    initialTime: maxTimePerRound,
     isActive: roundActive,
     onTimeUp: () => handleRoundEnd(true),
   });
@@ -79,8 +80,8 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
 
   const handleGameEnd = useCallback(() => {
     const newLocations = getNewGameLocations(
-      allPanoramas,
-      GAME_CONFIG.ROUNDS_PER_GAME
+      gameLocations,
+      maxRounds
     );
     
     // prepare state for next game
@@ -96,7 +97,7 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
       isTransitioningRound: false,
     });
     resetTimer();
-  }, [allPanoramas, gameCount, updateState, resetTimer]);
+  }, [gameLocations, maxRounds, gameCount, updateState, resetTimer]);
 
   const handleSetGuessLocation = useCallback((location: LatLngTuple) => {
     updateState({ guessLocation: location });
@@ -140,7 +141,7 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
     if (roundActive && guessLocation) {
       handleRoundEnd();
     } else if (!roundActive) {
-      if (currentRound >= GAME_CONFIG.ROUNDS_PER_GAME) {
+      if (currentRound >= gameConfig.maxRounds) {
         handleGameEnd();
       } else {
         handleTransitionToNextRound();
@@ -157,7 +158,8 @@ export function useGameState(allPanoramas: LocationConfig[]): GameStateContextTy
     handleRoundEnd,
     currentRound,
     handleGameEnd,
-    handleTransitionToNextRound
+    handleTransitionToNextRound,
+    gameConfig
   ]);
 
   const handlePanoramaTransitionEnd = useCallback(() => {

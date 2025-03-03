@@ -22,7 +22,10 @@ export interface GameStateType {
   phase: GamePhase;
   gameLocations: LocationConfig[];
   gameCount: number;
-  
+  mapId: string; // Used for map tile source
+  maxRounds: number;
+  maxTimePerRound: number;
+
   // Round state
   guessLocation: LatLngTuple | null;
   roundActive: boolean;
