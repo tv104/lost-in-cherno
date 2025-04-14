@@ -7,7 +7,7 @@ import {
   ResultsScreen,
   MenuScreen,
 } from "./components/overlays";
-import { useGameStateContext } from "./contexts";
+import { useGameState } from "./hooks";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -18,11 +18,12 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 function App() {
-  const { phase } = useGameStateContext();
+  const { state } = useGameState();
+
   return (
     <Box sx={styles.container}>
-      {phase === "menu" && <MenuScreen />}
-      {phase === "results" && <ResultsScreen />}
+      {state.phase === "menu" && <MenuScreen />}
+      {state.phase === "results" && <ResultsScreen />}
       <GuessMap />
       <PanoramaViewer />
       <RoundResultMessage />

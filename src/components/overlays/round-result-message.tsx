@@ -2,7 +2,7 @@ import { ThemeUIStyleObject } from "theme-ui";
 import { Heading } from "theme-ui";
 import { getResultMessage } from "../../utils";
 import { useMemo } from "react";
-import { useGameStateContext } from "../../contexts";
+import { useGameState } from "../../hooks";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   container: {
@@ -23,8 +23,17 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 export const RoundResultMessage: React.FC = () => {
-  const { guessLocation, gameLocations, currentRound, showAnswer } =
-    useGameStateContext();
+  const { state } = useGameState();
+
+  const { guessLocation, gameLocations, currentRound } = state;
+
+  const showAnswer = useMemo(() => {
+    return (
+      state.phase === "game" &&
+      !state.roundActive &&
+      !state.isTransitioningRound
+    );
+  }, [state.phase, state.roundActive, state.isTransitioningRound]);
 
   const roundLocation = gameLocations[currentRound - 1].location;
 

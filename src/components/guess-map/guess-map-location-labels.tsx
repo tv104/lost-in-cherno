@@ -3,7 +3,7 @@ import L from "leaflet";
 import { useEffect, useState } from "react";
 import { ThemeUIStyleObject } from "theme-ui";
 import { Global } from "theme-ui";
-import { useGameStateContext } from "../../contexts";
+import { MapLabel } from "../../types";
 
 const globalStyles: ThemeUIStyleObject = {
   ".map-label": {
@@ -28,8 +28,11 @@ const globalStyles: ThemeUIStyleObject = {
   },
 };
 
-export const GuessMapLocationLabels: React.FC = () => {
-  const { mapLabels } = useGameStateContext();
+type Props = {
+  mapLabels: MapLabel[]
+}
+
+export const GuessMapLocationLabels: React.FC<Props> = ({ mapLabels }) => {
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
 

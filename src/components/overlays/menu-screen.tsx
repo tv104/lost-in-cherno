@@ -1,11 +1,16 @@
 import { Button, Text, Heading } from "theme-ui";
 import { Overlay } from "./overlay";
 import { useState } from "react";
-import { useGameStateContext } from "../../contexts";
+import { useGameState } from "../../hooks";
 
 export const MenuScreen: React.FC = () => {
-  const { handleStartGame, firstRoundReady } = useGameStateContext();
   const [isExiting, setIsExiting] = useState(false);
+  const { state, dispatch } = useGameState();
+  const { firstRoundReady } = state;
+
+  const handleStartGame = () => {
+    dispatch({ type: "START_GAME" });
+  };
 
   return (
     <Overlay isExiting={isExiting} onExited={handleStartGame}>

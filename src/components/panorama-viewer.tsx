@@ -1,21 +1,19 @@
 import { useRef, useCallback, useLayoutEffect, ComponentProps } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 import { Box, ThemeUIStyleObject } from "theme-ui";
-import { useGameStateContext } from "../contexts";
 import "@photo-sphere-viewer/compass-plugin/index.css";
 import { CompassPlugin } from "@photo-sphere-viewer/compass-plugin";
+import { useGameState } from "../hooks";
 
 export const PanoramaViewer: React.FC = () => {
+  const { state, dispatch } = useGameState();
   const {
     gameLocations,
     currentRound,
     roundActive,
     isTransitioningRound,
-    handleCurrentPanoramicImgReady,
-    handleNextPanoramicImgReady,
-    handlePanoramaTransitionEnd,
     gameCount,
-  } = useGameStateContext();
+  } = state;
 
   const src = gameLocations[currentRound - 1].image;
   const preloadSrc = gameLocations[currentRound]?.image;
@@ -42,7 +40,12 @@ export const PanoramaViewer: React.FC = () => {
   const currentImageRef = useRef<HTMLDivElement>(null);
 
   const handleTransitionEnd = useCallback(() => {
-    handlePanoramaTransitionEnd();
+    if (isTransitioningRound) {
+      dispatch({
+        type: "START_ROUND",
+        payload: { currentRound: currentRound },
+      });
+    }
 
     if (containerRef.current) {
       containerRef.current.style.willChange = "auto";
@@ -50,7 +53,7 @@ export const PanoramaViewer: React.FC = () => {
     if (currentImageRef.current) {
       currentImageRef.current.style.willChange = "auto";
     }
-  }, [handlePanoramaTransitionEnd]);
+  }, [dispatch, isTransitioningRound, currentRound]);
 
   // Apply willChange before transitions start
   useLayoutEffect(() => {
@@ -91,6 +94,14 @@ export const PanoramaViewer: React.FC = () => {
       zIndex: 0,
       opacity: 1,
     },
+  };
+
+  const handleCurrentPanoramicImgReady = () => {
+    dispatch({ type: "CURRENT_IMG_READY" });
+  };
+
+  const handleNextPanoramicImgReady = () => {
+    dispatch({ type: "NEXT_IMG_READY" });
   };
 
   return (

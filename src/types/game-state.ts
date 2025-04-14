@@ -18,6 +18,7 @@ export type LocationConfig = {
 
 export interface GameStateType {
   // Game state
+  allLocations: LocationConfig[];
   currentRound: number;
   gameResults: RoundResult[];
   phase: GamePhase;
@@ -34,6 +35,14 @@ export interface GameStateType {
   firstRoundReady: boolean;
   nextRoundReady: boolean;
   isTransitioningRound: boolean;
+
+  // Computed values
+  // disableMapButton: boolean;
+  // disableMapMarker: boolean;
+  // showAnswer: boolean;
+
+  // Time state
+  // timeLeft: number;
 }
 
 export interface GameStateContextType extends GameStateType {
@@ -49,7 +58,7 @@ export interface GameStateContextType extends GameStateType {
   handleStartRound: () => void;
   handleMapButtonClick: () => void;
   handlePanoramaTransitionEnd: () => void;
-  
+
   // Computed values
   disableMapButton: boolean;
   disableMapMarker: boolean;

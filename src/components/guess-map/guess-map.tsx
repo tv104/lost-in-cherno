@@ -1,7 +1,7 @@
 import { Box, Global } from "theme-ui";
 import { MapContainer, TileLayer, Polyline } from "react-leaflet";
-import { LatLngBoundsLiteral } from "leaflet";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { LatLngBoundsLiteral, LatLngTuple } from "leaflet";
+import { useState } from "react";
 import { createStyles, globalStyles } from "./guess-map-styles";
 import {
   AddMarkerOnClick,
@@ -13,7 +13,15 @@ import L from "leaflet";
 import { GuessMapButton } from "./guess-map-button";
 import { GuessMapLocationLabels } from "./guess-map-location-labels";
 import { GuessMapMarker } from "./guess-map-marker";
-import { useGameStateContext } from "../../contexts";
+import { calculateDistance } from "../../utils/distance";
+import {
+  useRoundTimer,
+  useDisableMapMarker,
+  useShowAnswer,
+  useMapExpansion,
+  useMapButton,
+  useGameState,
+} from "../../hooks";
 
 const MAX_MAP_BOUNDS: LatLngBoundsLiteral = [
   [-90, -180],
@@ -21,52 +29,65 @@ const MAX_MAP_BOUNDS: LatLngBoundsLiteral = [
 ];
 
 export const GuessMap: React.FC = () => {
+  const { state, dispatch } = useGameState();
   const {
     guessLocation,
-    handleSetGuessLocation,
     gameLocations,
     currentRound,
-    showAnswer,
-    handleMapButtonClick,
-    disableMapButton,
-    disableMapMarker,
-    timeLeft,
     isTransitioningRound,
     gameCount,
     mapId,
     maxRounds,
-  } = useGameStateContext();
+    roundActive,
+    maxTimePerRound,
+    mapLabels,
+  } = state;
 
   const roundLocation = gameLocations[currentRound - 1].location;
   const [isExpanded, setIsExpanded] = useState(false);
-  const timeoutRef = useRef<number | undefined>(undefined);
 
-  const handleMouseLeave = useCallback(() => {
-    if (timeoutRef.current) {
-      window.clearTimeout(timeoutRef.current);
-    }
+  const { timeLeft, resetTimer } = useRoundTimer({
+    initialTime: maxTimePerRound,
+    isActive: roundActive,
+    onTimeUp: () => handleTimeUp(),
+  });
 
-    timeoutRef.current = window.setTimeout(() => {
-      if (!showAnswer && !guessLocation) {
-        setIsExpanded(false);
-      }
-    }, 1000);
-  }, [showAnswer, guessLocation]);
+  const disableMapMarker = useDisableMapMarker({ state });
+  const showAnswer = useShowAnswer({ state });
+  const { mapButtonDisabled, handleMapButtonClick } = useMapButton({
+    state,
+    timeLeft,
+    showAnswer,
+    resetTimer,
+    dispatch,
+  });
 
-  const handleMouseEnter = useCallback(() => {
-    if (timeoutRef.current) {
-      window.clearTimeout(timeoutRef.current);
-    }
-    setIsExpanded(true);
-  }, []);
+  const handleTimeUp = () => {
+    const distance = guessLocation
+      ? calculateDistance(guessLocation, roundLocation)
+      : null;
 
-  useEffect(() => {
-    if (showAnswer || guessLocation) {
-      setIsExpanded(true);
-    }
-  }, [showAnswer, guessLocation]);
+    dispatch({
+      type: "END_ROUND",
+      payload: {
+        locationId: gameLocations[currentRound - 1].id,
+        distance,
+        timeLeft: timeLeft,
+      },
+    });
+  };
+
+  const { handleMouseLeave, handleMouseEnter } = useMapExpansion({
+    showAnswer,
+    guessLocation,
+    setIsExpanded,
+  });
 
   const styles = createStyles(isExpanded);
+
+  const handleSetGuessLocation = (pos: LatLngTuple) => {
+    dispatch({ type: "SET_GUESS_LOCATION", payload: { location: pos } });
+  };
 
   return (
     <>
@@ -92,8 +113,8 @@ export const GuessMap: React.FC = () => {
             wheelPxPerZoomLevel={180}
             maxBoundsViscosity={1.0}
           >
-            <TileLayer url={`tiles/${mapId}/{z}/{x}/{y}.webp`} noWrap={true} />
-            <GuessMapLocationLabels />
+            <TileLayer url={`tiles/${mapId}/{z}/{x}/{y}.webp`} noWrap />
+            <GuessMapLocationLabels mapLabels={mapLabels} />
             <AddMarkerOnClick
               setLocation={handleSetGuessLocation}
               disabled={disableMapMarker}
@@ -118,7 +139,7 @@ export const GuessMap: React.FC = () => {
             showAnswer={showAnswer}
             currentRound={currentRound}
             maxRounds={maxRounds}
-            disabled={disableMapButton}
+            disabled={mapButtonDisabled}
             onClick={handleMapButtonClick}
           />
         </Box>

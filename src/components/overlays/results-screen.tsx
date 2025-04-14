@@ -6,7 +6,7 @@ import {
   getScoreHeadingMessage,
 } from "../../utils";
 import { useState, useMemo } from "react";
-import { useGameStateContext } from "../../contexts";
+import { useGameState } from "../../hooks";
 
 const styles: Record<string, ThemeUIStyleObject> = {
   rounds: {
@@ -17,9 +17,13 @@ const styles: Record<string, ThemeUIStyleObject> = {
 };
 
 export const ResultsScreen: React.FC = () => {
-  const { handleStartGame, firstRoundReady, gameResults, maxTimePerRound } =
-    useGameStateContext();
   const [isExiting, setIsExiting] = useState(false);
+  const { state, dispatch } = useGameState();
+  const { firstRoundReady, gameResults, maxTimePerRound } = state;
+
+  const handleStartGame = () => {
+    dispatch({ type: "START_GAME" });
+  };
 
   const finalScore = useMemo(
     () => calculateTotalScore(gameResults, maxTimePerRound),
