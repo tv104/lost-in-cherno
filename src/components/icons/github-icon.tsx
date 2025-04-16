@@ -2,8 +2,8 @@ import { SVGProps } from "react";
 
 export const GitHubIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    width="1em"
-    height="1em"
+    width="0.875rem"
+    height="0.875rem"
     viewBox="0 0 98 96"
     xmlns="http://www.w3.org/2000/svg"
     {...props}

@@ -1,20 +1,19 @@
-import { Image, ThemeUIStyleObject } from "theme-ui";
 import logo from "./logo.webp";
+import { cn } from "@/utils";
 
 type Props = {
-  sx?: ThemeUIStyleObject;
+  className?: string;
 };
 
-export const Logo: React.FC<Props> = ({ sx }) => {
-  const styles: Record<string, ThemeUIStyleObject> = {
-    logo: {
-      width: "100%",
-      height: "auto",
-      maxWidth: ["320px", "480px"],
-      aspectRatio: "37/31",
-      ...sx,
-    },
-  };
-
-  return <Image src={logo} alt="Lost in Cherno logo" sx={styles.logo} />;
+export const Logo: React.FC<Props> = ({ className }) => {
+  return (
+    <img
+      src={logo}
+      alt="Lost in Cherno logo"
+      className={cn(
+        "w-full h-auto max-w-[320px] md:max-w-[480px] aspect-[calc(37/31)]",
+        className
+      )}
+    />
+  );
 };
