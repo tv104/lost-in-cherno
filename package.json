@@ -16,13 +16,21 @@
   "dependencies": {
     "@photo-sphere-viewer/compass-plugin": "^5.12.1",
     "@photo-sphere-viewer/core": "^5.12.0",
+    "@radix-ui/react-slot": "^1.2.0",
+    "@tailwindcss/vite": "^4.1.4",
     "@theme-ui/core": "^0.17.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.488.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0-rc.2",
     "react-photo-sphere-viewer": "^6.0.1",
-    "theme-ui": "^0.17.2"
+    "tailwind-merge": "^3.2.0",
+    "tailwindcss": "^4.1.4",
+    "theme-ui": "^0.17.2",
+    "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -30,6 +38,7 @@
     "@testing-library/react": "^16.2.0",
     "@types/jest": "^29.5.14",
     "@types/leaflet": "^1.9.16",
+    "@types/node": "^22.14.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
