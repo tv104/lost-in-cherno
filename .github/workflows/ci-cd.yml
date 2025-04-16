@@ -60,12 +60,19 @@ jobs:
       # Configure base path for Vite if your repo name is not the root domain
       - name: Update vite.config.ts
         run: |
-          echo "import { defineConfig } from 'vite'
+          echo "import path from 'path'
+          import { defineConfig } from 'vite'
           import react from '@vitejs/plugin-react'
+          import tailwindcss from '@tailwindcss/vite'
 
           export default defineConfig({
-            plugins: [react()],
+            plugins: [react(), tailwindcss()],
             base: '/lost-in-cherno/',
+            resolve: {
+              alias: {
+                '@': path.resolve(__dirname, './src'),
+              },
+            },
           })" > vite.config.ts
 
       - name: Build with updated config
