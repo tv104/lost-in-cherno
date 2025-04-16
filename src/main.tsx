@@ -5,8 +5,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { ThemeUIProvider } from "theme-ui";
-import { theme } from "./theme/theme.ts";
 import "leaflet/dist/leaflet.css";
 import { GameConfig } from "./types";
 import { GameProvider } from "./providers/game-provider.tsx";
@@ -22,9 +20,7 @@ const chernarusGameConfig: GameConfig = {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <GameProvider gameConfig={chernarusGameConfig}>
-      <ThemeUIProvider theme={theme}>
-        <App />
-      </ThemeUIProvider>
+      <App />
     </GameProvider>
   </StrictMode>
 );

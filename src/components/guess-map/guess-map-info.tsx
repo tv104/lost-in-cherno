@@ -1,4 +1,3 @@
-import { Text } from "theme-ui";
 import { cn, formatTime } from "@/utils";
 import { useMemo } from "react";
 
@@ -30,12 +29,12 @@ export const GuessMapInfo: React.FC<GuessMapInfoProps> = ({
 
   return (
     <div className={infoStyles}>
-      <Text>
+      <span>
         Round {currentRound}/{maxRounds}
-      </Text>
-      <Text>
+      </span>
+      <span>
         Time left: <span className={timeStyles}>{formatTime(timeLeft)}s</span>
-      </Text>
+      </span>
     </div>
   );
 };

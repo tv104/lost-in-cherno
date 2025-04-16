@@ -10,7 +10,7 @@
 
 ## Development
 
-Mainly built with react, typescript, and theme-ui
+Mainly built with react, typescript, and tailwind
 
 ```bash
 npm install
