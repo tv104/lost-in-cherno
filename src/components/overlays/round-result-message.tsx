@@ -27,11 +27,7 @@ export const RoundResultMessage: React.FC = () => {
   }
 
   return (
-    <h1
-      className={
-        "absolute top-0 left-0 right-0 bottom-0 z-[var(--z-overlay)] flex justify-center items-center text-shadow-[var(--drop-shadow-overlay)] text-uppercase pointer-events-none"
-      }
-    >
+    <h1 className="absolute top-0 left-0 right-0 bottom-0 z-overlay flex justify-center items-center text-shadow-overlay text-uppercase pointer-events-none text-3xl">
       {message}
     </h1>
   );

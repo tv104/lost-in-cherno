@@ -1,6 +1,6 @@
-import { Box, Text, ThemeUIStyleObject } from "theme-ui";
-import { formatTime } from "../../utils";
-import { BUTTON_HEIGHT } from "./guess-map-styles";
+import { Text } from "theme-ui";
+import { cn, formatTime } from "@/utils";
+import { useMemo } from "react";
 
 type GuessMapInfoProps = {
   currentRound: number;
@@ -9,53 +9,9 @@ type GuessMapInfoProps = {
   maxRounds: number;
 };
 
-const PULSE = {
-  from: { color: "white" },
-  to: { color: "red" },
-};
-
-const getTimeLeftStyles = (
-  timeLeft: number,
-  showAnswer: boolean
-): ThemeUIStyleObject => {
-  if (showAnswer) return {};
-
-  if (timeLeft <= 5) {
-    return {
-      animation: "pulse .5s ease-in-out infinite alternate",
-      "@keyframes pulse": PULSE,
-    };
-  }
-
-  if (timeLeft <= 10) {
-    return {
-      animation: "pulse 1s ease-in-out infinite alternate",
-      "@keyframes pulse": PULSE,
-    };
-  }
-
-  return {};
-};
-
-const styles: Record<string, ThemeUIStyleObject> = {
-  info: {
-    position: "absolute",
-    top: -BUTTON_HEIGHT - 4,
-    color: "white",
-    right: 0,
-    left: 0,
-    height: BUTTON_HEIGHT,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    textShadow: "overlay",
-  },
-  timeLeft: {
-    fontFamily: "monospace",
-    fontVariantNumeric: "tabular-nums",
-    fontSize: "1.1rem",
-  },
-};
+const infoStyles =
+  "absolute top-[calc(var(--button-height)*-1)] right-0 left-0 h-[var(--button-height)] flex justify-between items-end text-shadow-overlay";
+const timeLeftStyles = "font-mono tabular-nums text-lg";
 
 export const GuessMapInfo: React.FC<GuessMapInfoProps> = ({
   currentRound,
@@ -63,22 +19,23 @@ export const GuessMapInfo: React.FC<GuessMapInfoProps> = ({
   showAnswer,
   maxRounds,
 }) => {
+  const timeStyles: string = useMemo(() => {
+    if (showAnswer) return timeLeftStyles;
+
+    return cn(timeLeftStyles, {
+      "animation-pulse-color": timeLeft <= 10 && timeLeft > 5,
+      "animation-pulse-color-fast": timeLeft <= 5,
+    });
+  }, [timeLeft, showAnswer]);
+
   return (
-    <Box sx={styles.info}>
+    <div className={infoStyles}>
       <Text>
         Round {currentRound}/{maxRounds}
       </Text>
       <Text>
-        Time left:{" "}
-        <Text
-          sx={{
-            ...styles.timeLeft,
-            ...getTimeLeftStyles(timeLeft, showAnswer),
-          }}
-        >
-          {formatTime(timeLeft)}s
-        </Text>
+        Time left: <span className={timeStyles}>{formatTime(timeLeft)}s</span>
       </Text>
-    </Box>
+    </div>
   );
 };
