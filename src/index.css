@@ -44,6 +44,9 @@
   --z-map: 2;
   --z-overlay: 3;
   --z-audioPlayer: 4;
+
+  --drop-shadow-overlay: 0px 2px 3px rgba(0, 0, 0, 0.6),
+    0px 4px 13px rgba(0, 0, 0, 0.1), 0px 8px 23px rgba(0, 0, 0, 0.1);
 }
 
 :root {
