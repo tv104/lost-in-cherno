@@ -16,7 +16,7 @@ const containerStyles = cn(
 );
 
 const contentContainerStyles = cn(
-  "flex flex-col items-center justify-center gap-4 my-auto text-center pb-5"
+  "flex flex-col items-center justify-center gap-6 my-auto text-center pb-5"
 );
 
 export const Overlay: React.FC<Props> = ({ children, isExiting, onExited }) => {
@@ -56,7 +56,7 @@ export const Overlay: React.FC<Props> = ({ children, isExiting, onExited }) => {
       )}
     >
       <div className={contentContainerStyles}>
-        <Logo className="mb-4" />
+        <Logo className="mb-8" />
         {children}
       </div>
       <Footer />

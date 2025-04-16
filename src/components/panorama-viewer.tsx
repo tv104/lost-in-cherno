@@ -102,7 +102,6 @@ export const PanoramaViewer: React.FC = () => {
           {...commonProps}
           height={commonProps.height || "100%"}
           src={src}
-          containerClass="current-pano-img"
           onReady={handleCurrentPanoramicImgReady}
           sphereCorrection={{
             pan: gameLocations[currentRound - 1].panCorrection,
@@ -118,7 +117,6 @@ export const PanoramaViewer: React.FC = () => {
             {...commonProps}
             height={commonProps.height || "100%"}
             src={preloadSrc}
-            containerClass="next-pano-img"
             onReady={handleNextPanoramicImgReady}
             sphereCorrection={{
               pan: gameLocations[currentRound].panCorrection,
