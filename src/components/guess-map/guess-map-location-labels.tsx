@@ -1,36 +1,12 @@
 import { LayerGroup, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
-import { useEffect, useState } from "react";
-import { ThemeUIStyleObject } from "theme-ui";
-import { Global } from "theme-ui";
+import { useEffect, useState, useMemo } from "react";
 import { MapLabel } from "../../types";
-
-const globalStyles: ThemeUIStyleObject = {
-  ".map-label": {
-    WebkitTextStroke: "0.2px #000",
-    WebkitTextFillColor: "#fff",
-    textShadow: "overlay",
-    color: "#fff",
-    fontSize: ".95rem",
-    fontWeight: "500",
-    fontFamily: "body",
-    whiteSpace: "nowrap",
-    cursor: "inherit",
-  },
-  ".importance-3": {
-    fontSize: ".95rem",
-  },
-  ".importance-2": {
-    fontSize: ".85rem",
-  },
-  ".importance-1": {
-    fontSize: ".85rem",
-  },
-};
+import { cn } from "@/utils";
 
 type Props = {
-  mapLabels: MapLabel[]
-}
+  mapLabels: MapLabel[];
+};
 
 export const GuessMapLocationLabels: React.FC<Props> = ({ mapLabels }) => {
   const map = useMap();
@@ -48,34 +24,42 @@ export const GuessMapLocationLabels: React.FC<Props> = ({ mapLabels }) => {
     };
   }, [map]);
 
-  const filteredLabels = mapLabels.filter((label) => {
+  const filteredLabels = useMemo(() => {
     const minZoom = map.getMinZoom();
 
-    if (zoom <= minZoom) {
-      return label.importance === 3;
-    } else if (zoom === minZoom + 1) {
-      return label.importance >= 2;
-    } else {
-      return true;
-    }
-  });
+    return mapLabels.filter((label) => {
+      if (zoom <= minZoom) {
+        return label.importance === 3;
+      } else if (zoom === minZoom + 1) {
+        return label.importance >= 2;
+      } else {
+        return true;
+      }
+    });
+  }, [mapLabels, zoom, map]);
 
   return (
-    <>
-      <Global styles={globalStyles} />
-      <LayerGroup>
-        {filteredLabels.map((label) => (
+    <LayerGroup>
+      {filteredLabels.map((label: MapLabel) => {
+        const labelStyles = cn(
+          "whitespace-nowrap !cursor-[inherit] text-[0.95rem] text-shadow-overlay font-medium",
+          {
+            "text-[0.95rem]": label.importance === 3,
+            "text-[0.85rem]": label.importance <= 2,
+          }
+        );
+        return (
           <Marker
             key={label.name}
             position={label.position}
             icon={L.divIcon({
-              className: `map-label importance-${label.importance}`,
+              className: labelStyles,
               html: label.name,
               iconAnchor: [50, 10],
             })}
           />
-        ))}
-      </LayerGroup>
-    </>
+        );
+      })}
+    </LayerGroup>
   );
 };

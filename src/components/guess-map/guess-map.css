@@ -1,0 +1,36 @@
+/**
+    react-leaflet's MapContainer does not update on className changes. 
+**/
+
+.map.leaflet-container {
+  background-color: var(--color-map-background);
+  width: var(--map-size);
+  height: var(--map-size);
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: var(--radius);
+  transform: scale(0.75);
+  filter: opacity(0.9);
+  transform-origin: top right;
+  transition: transform 0.4s var(--map-easing-fn),
+    filter 0.4s var(--map-easing-fn);
+}
+
+.is-expanded .map.leaflet-container {
+  transform: scale(1);
+  filter: opacity(1);
+  transition-duration: 0.1s;
+}
+
+/**
+    react-leaflet's MapMarker does not support a custom className.
+**/
+
+.leaflet-marker-icon {
+  filter: drop-shadow(1px 5px 3px rgba(0, 0, 0, 0.6));
+}
+
+.leaflet-marker-icon:nth-of-type(1) {
+  filter: drop-shadow(1px 5px 3px rgba(0, 0, 0, 0.6)) hue-rotate(-60deg);
+}

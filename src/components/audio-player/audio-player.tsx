@@ -1,24 +1,13 @@
 import { useRef, useEffect, useState } from "react";
-import { Box, Button, ThemeUIStyleObject } from "theme-ui";
 import { VolumeUpIcon, VolumeMuteIcon } from "../icons";
-import backgroundMusic from './lost-in-cherno.mp3'
+import backgroundMusic from "./lost-in-cherno.mp3";
+import { cn } from "@/utils";
 
-const styles: Record<string, ThemeUIStyleObject> = {
-  container: {
-    position: "absolute",
-    top: 3,
-    right: 3,
-    zIndex: "audioPlayer",
-  },
-
-  playButton: {
-    background: "transparent",
-    "& svg": {
-      filter: "drop-shadow(0px 2px 3px rgba(0,0,0,0.4))",
-      size: 30,
-    },
-  },
-};
+const containerStyles = cn("absolute top-6 right-6 z-audioPlayer");
+const playButtonStyles = cn(
+  "bg-transparent cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-100"
+);
+const svgStyles = cn("drop-shadow-overlay size-8");
 
 export const AudioPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -118,11 +107,15 @@ export const AudioPlayer: React.FC = () => {
   };
 
   return (
-    <Box sx={styles.container}>
+    <div className={containerStyles}>
       <audio ref={audioRef} src={backgroundMusic} loop />
-      <Button sx={styles.playButton} onClick={togglePlayPause}>
-        {isPlaying ? <VolumeUpIcon /> : <VolumeMuteIcon />}
-      </Button>
-    </Box>
+      <button className={playButtonStyles} onClick={togglePlayPause}>
+        {isPlaying ? (
+          <VolumeUpIcon className={svgStyles} />
+        ) : (
+          <VolumeMuteIcon className={svgStyles} />
+        )}
+      </button>
+    </div>
   );
 };

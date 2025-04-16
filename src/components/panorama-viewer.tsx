@@ -1,9 +1,9 @@
 import { useRef, useCallback, useLayoutEffect, ComponentProps } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
-import { Box, ThemeUIStyleObject } from "theme-ui";
 import "@photo-sphere-viewer/compass-plugin/index.css";
 import { CompassPlugin } from "@photo-sphere-viewer/compass-plugin";
 import { useGameState } from "../hooks";
+import { cn } from "@/utils";
 
 export const PanoramaViewer: React.FC = () => {
   const { state, dispatch } = useGameState();
@@ -67,34 +67,20 @@ export const PanoramaViewer: React.FC = () => {
     }
   }, [isTransitioningRound, roundActive]);
 
-  const styles: Record<string, ThemeUIStyleObject> = {
-    container: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: "panorama",
-      filter: roundActive ? "none" : "grayscale(0.75) brightness(0.95)",
-      transition: "filter 0.2s linear",
-    },
-    panoramaImage: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      transition: "filter 1.5s ease-in",
-    },
-    currentImage: {
-      zIndex: 1,
-      filter: isTransitioningRound ? "opacity(0)" : "opacity(1)",
-    },
-    nextImage: {
-      zIndex: 0,
-      opacity: 1,
-    },
-  };
+  const containerStyles = cn(
+    "absolute top-0 left-0 right-0 bottom-0 z-panorama transition-filter duration-2000 ease-linear",
+    roundActive ? "filter-none" : "grayscale-75 brightness-95"
+  );
+  const panoramaImageStyles =
+    "absolute top-0 left-0 bottom-0 right-0 transition-opacity duration-1500 ease-in";
+
+  const currentImageStyles = cn(
+    panoramaImageStyles,
+    "z-1",
+    isTransitioningRound ? "opacity-0" : "opacity-100"
+  );
+
+  const nextImageStyles = cn(panoramaImageStyles, "z-0 opacity-100");
 
   const handleCurrentPanoramicImgReady = () => {
     dispatch({ type: "CURRENT_IMG_READY" });
@@ -105,9 +91,9 @@ export const PanoramaViewer: React.FC = () => {
   };
 
   return (
-    <Box sx={styles.container} ref={containerRef}>
-      <Box
-        sx={{ ...styles.panoramaImage, ...styles.currentImage }}
+    <div className={containerStyles} ref={containerRef}>
+      <div
+        className={currentImageStyles}
         key={`${src}-${gameCount}`} // gameCount is used to ensure the component re-renders
         onTransitionEnd={handleTransitionEnd}
         ref={currentImageRef}
@@ -116,30 +102,28 @@ export const PanoramaViewer: React.FC = () => {
           {...commonProps}
           height={commonProps.height || "100%"}
           src={src}
-          containerClass="current-pano-img"
           onReady={handleCurrentPanoramicImgReady}
           sphereCorrection={{
             pan: gameLocations[currentRound - 1].panCorrection,
           }}
         />
-      </Box>
+      </div>
       {preloadSrc && (
-        <Box
-          sx={{ ...styles.panoramaImage, ...styles.nextImage }}
+        <div
+          className={nextImageStyles}
           key={`${preloadSrc}-${gameCount}`} // gameCount is used to ensure the component re-renders
         >
           <ReactPhotoSphereViewer
             {...commonProps}
             height={commonProps.height || "100%"}
             src={preloadSrc}
-            containerClass="next-pano-img"
             onReady={handleNextPanoramicImgReady}
             sphereCorrection={{
               pan: gameLocations[currentRound].panCorrection,
             }}
           />
-        </Box>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };

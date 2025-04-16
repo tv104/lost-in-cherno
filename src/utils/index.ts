@@ -6,3 +6,4 @@ export * from "./death-messages";
 export * from "./result-formatting";
 export * from "./score/high-score";
 export * from "./code-safety";
+export * from "./shadcn-utils";

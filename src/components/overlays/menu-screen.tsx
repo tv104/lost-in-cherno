@@ -1,7 +1,7 @@
-import { Button, Text, Heading } from "theme-ui";
 import { Overlay } from "./overlay";
 import { useState } from "react";
 import { useGameState } from "../../hooks";
+import { Button } from "@/components/ui/button";
 
 export const MenuScreen: React.FC = () => {
   const [isExiting, setIsExiting] = useState(false);
@@ -14,9 +14,13 @@ export const MenuScreen: React.FC = () => {
 
   return (
     <Overlay isExiting={isExiting} onExited={handleStartGame}>
-      <Heading>A DayZ GeoGuessr</Heading>
-      <Text>Guess the ingame location before time runs out</Text>
-      <Button onClick={() => setIsExiting(true)} disabled={!firstRoundReady}>
+      <h1>A DayZ GeoGuessr</h1>
+      <p>Guess the ingame location before time runs out</p>
+      <Button
+        onClick={() => setIsExiting(true)}
+        disabled={!firstRoundReady}
+        variant="default"
+      >
         Play
       </Button>
     </Overlay>

@@ -1,4 +1,4 @@
-import { Button, ThemeUIStyleObject } from "theme-ui";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   showAnswer: boolean;
@@ -6,15 +6,6 @@ type Props = {
   maxRounds: number;
   onClick: () => void;
   disabled?: boolean;
-};
-
-const styles: Record<string, ThemeUIStyleObject> = {
-  button: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    left: 0,
-  },
 };
 
 const getButtonText = (
@@ -36,8 +27,8 @@ export const GuessMapButton: React.FC<Props> = ({
   disabled,
 }) => (
   <Button
-    variant="primary"
-    sx={styles.button}
+    variant="default"
+    className="absolute bottom-0 right-0 left-0"
     onClick={onClick}
     disabled={disabled}
   >

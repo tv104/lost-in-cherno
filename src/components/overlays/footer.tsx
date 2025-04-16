@@ -1,71 +1,54 @@
-import { Box, ThemeUIStyleObject, Link } from "theme-ui";
 import { GitHubIcon } from "../icons";
+import { cn } from "@/utils";
 
 type Props = {
-  sx?: ThemeUIStyleObject;
+  className?: string;
 };
 
-export const Footer = ({ sx }: Props) => {
-  const styles: Record<string, ThemeUIStyleObject> = {
-    container: {
-      display: "flex",
-      columnGap: 4,
-      rowGap: 2,
-      flexWrap: "wrap",
-      alignItems: "center",
-      justifyContent: "center",
-      ...sx,
-    },
-    link: {
-      color: "text",
-      textDecoration: "none",
-      transition: "opacity 0.2s ease-in-out",
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 2,
-      fontSize: "0.85rem",
-      opacity: 0.66,
-
-      "&:hover": {
-        opacity: 1,
-      },
-    },
-  };
+export const Footer = ({ className }: Props) => {
+  const linkClassName = cn(
+    "inline-flex text-sm opacity-66 gap-2 hover:opacity-100 items-center leading-none"
+  );
 
   return (
-    <Box sx={{ ...styles.container }} as="footer">
-      <Link
+    <footer
+      className={cn(
+        "flex gap-y-3 gap-x-5 flex-wrap items-center justify-center",
+        className
+      )}
+    >
+      <a
         href="https://github.com/tv104/lost-in-cherno"
-        sx={styles.link}
+        className={linkClassName}
         target="_blank"
         rel="noopener noreferrer"
       >
         <GitHubIcon /> GitHub
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://dayz.com/"
-        sx={styles.link}
+        className={linkClassName}
         target="_blank"
         rel="noopener noreferrer"
       >
         DayZ
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://dayz.ginfo.gg/"
-        sx={styles.link}
+        className={linkClassName}
         target="_blank"
         rel="noopener noreferrer"
       >
         2D map by iZurvive
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://suno.com/"
-        sx={styles.link}
+        className={linkClassName}
         target="_blank"
         rel="noopener noreferrer"
       >
         Music by Suno
-      </Link>
-    </Box>
+      </a>
+    </footer>
   );
 };

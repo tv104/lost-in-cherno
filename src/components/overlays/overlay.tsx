@@ -1,7 +1,7 @@
-import { ThemeUIStyleObject, Box } from "theme-ui";
 import { Footer } from "./footer";
 import { Logo } from "../logo/logo";
 import { useEffect, useRef } from "react";
+import { cn } from "@/utils";
 
 type Props = {
   children: React.ReactNode;
@@ -11,41 +11,13 @@ type Props = {
 
 const TRANSITION_DURATION = 2000;
 
-const styles: Record<string, ThemeUIStyleObject> = {
-  container: {
-    backgroundColor: "background",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    zIndex: "overlay",
-    p: 4,
-    overflowY: "auto",
-    opacity: 1,
-    transition: `opacity ${TRANSITION_DURATION}ms ease-in`,
-  },
-  contentContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    my: "auto",
-    textAlign: "center",
-    pb: 5,
-  },
-  footer: {
-    mt: "auto",
-  },
-  logo: {
-    mb: 4,
-  },
-};
+const containerStyles = cn(
+  `bg-secondary absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-start z-overlay p-4 overflow-y-auto opacity-100 transition-opacity duration-${TRANSITION_DURATION} ease-in`
+);
+
+const contentContainerStyles = cn(
+  "flex flex-col items-center justify-center gap-6 my-auto text-center pb-5"
+);
 
 export const Overlay: React.FC<Props> = ({ children, isExiting, onExited }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,20 +46,20 @@ export const Overlay: React.FC<Props> = ({ children, isExiting, onExited }) => {
   }, [isExiting, onExited]);
 
   return (
-    <Box
+    <div
       ref={containerRef}
-      sx={{
-        ...styles.container,
-        opacity: isExiting ? 0 : 1,
-        pointerEvents: isExiting ? "none" : "auto",
-        willChange: isExiting ? "opacity" : "auto",
-      }}
+      className={cn(
+        containerStyles,
+        isExiting && "opacity-0",
+        isExiting && "pointer-events-none",
+        isExiting && "will-change-opacity"
+      )}
     >
-      <Box sx={styles.contentContainer}>
-        <Logo sx={styles.logo} />
+      <div className={contentContainerStyles}>
+        <Logo className="mb-8" />
         {children}
-      </Box>
-      <Footer sx={styles.footer} />
-    </Box>
+      </div>
+      <Footer />
+    </div>
   );
 };
