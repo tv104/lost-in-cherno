@@ -1,20 +1,12 @@
-import { ThemeUIStyleObject, Button, Text, Box, Heading } from "theme-ui";
 import { Overlay } from "./overlay";
 import {
   calculateTotalScore,
   formatGameResults,
   getScoreHeadingMessage,
-} from "../../utils";
+} from "@/utils";
 import { useState, useMemo } from "react";
-import { useGameState } from "../../hooks";
-
-const styles: Record<string, ThemeUIStyleObject> = {
-  rounds: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 2,
-  },
-};
+import { useGameState } from "@/hooks";
+import { Button } from "@/components/ui/button";
 
 export const ResultsScreen: React.FC = () => {
   const [isExiting, setIsExiting] = useState(false);
@@ -42,14 +34,14 @@ export const ResultsScreen: React.FC = () => {
 
   return (
     <Overlay isExiting={isExiting} onExited={handleStartGame}>
-      <Heading>{headingMsg}</Heading>
-      <Box sx={styles.rounds}>
+      <h1>{headingMsg}</h1>
+      <div className="flex flex-col gap-2">
         {formattedResults.map(({ round, result }) => (
-          <Text key={round}>
+          <p key={round}>
             Round {round}: {result}
-          </Text>
+          </p>
         ))}
-      </Box>
+      </div>
       <Button disabled={!firstRoundReady} onClick={() => setIsExiting(true)}>
         Play Again
       </Button>
