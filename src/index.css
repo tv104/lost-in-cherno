@@ -39,16 +39,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-map-background: oklch(0.31 0.0398 128.44);
-
-  --z-panorama: 1;
-  --z-map: 2;
-  --z-overlay: 3;
-  --z-audioPlayer: 4;
-
-  --drop-shadow-overlay: 0px 2px 3px rgba(0, 0, 0, 0.6),
-    0px 4px 13px rgba(0, 0, 0, 0.1), 0px 8px 23px rgba(0, 0, 0, 0.1);
-
-  --button-height: 56px;
 }
 
 :root {
@@ -84,6 +74,31 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --font-sans: "Tomorrow", system-ui, -apple-system, sans-serif;
+
+  --z-panorama: 1;
+  --z-map: 2;
+  --z-overlay: 3;
+  --z-audioPlayer: 4;
+
+  --drop-shadow-overlay: 0px 2px 3px rgba(0, 0, 0, 0.6),
+    0px 4px 13px rgba(0, 0, 0, 0.1), 0px 8px 23px rgba(0, 0, 0, 0.1);
+
+  --button-height: 56px;
+
+  --map-size: 420px;
+  --map-width: var(--map-size);
+  --map-height: var(--map-size);
+  --map-width-sm: calc(var(--map-width) * 0.75);
+  --map-height-sm: calc(var(--map-height) * 0.75);
+  --map-container-width: var(--map-width);
+  --map-container-width-sm: var(--map-width-sm);
+  --map-container-height: calc(
+    var(--map-height) + var(--button-height) + var(--spacing) * 3
+  );
+  --map-container-height-sm: calc(
+    var(--map-height-sm) + var(--button-height) + var(--spacing) * 3
+  );
+  --map-easing-fn: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @layer base {
@@ -105,6 +120,38 @@
 }
 
 @layer utilities {
+  /* map utilities - mobile-first order of declaration matters */
+  .w-map-sm {
+    width: var(--map-width-sm);
+  }
+  .w-map {
+    width: var(--map-width);
+  }
+  .h-map-sm {
+    height: var(--map-height-sm);
+  }
+  .h-map {
+    height: var(--map-height);
+  }
+
+  .w-map-container-sm {
+    width: var(--map-container-width-sm);
+  }
+  .w-map-container {
+    width: var(--map-container-width);
+  }
+
+  .h-map-container-sm {
+    height: var(--map-container-height-sm);
+  }
+  .h-map-container {
+    height: var(--map-container-height);
+  }
+
+  .ease-map {
+    transition-timing-function: var(--map-easing-fn);
+  }
+
   /* animations */
   @keyframes pulse-color {
     from {
