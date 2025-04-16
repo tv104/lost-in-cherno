@@ -3,11 +3,11 @@ import { VolumeUpIcon, VolumeMuteIcon } from "../icons";
 import backgroundMusic from "./lost-in-cherno.mp3";
 import { cn } from "@/utils";
 
-const containerStyles = cn("absolute top-6 right-6 z-[var(--z-audioPlayer)]");
+const containerStyles = cn("absolute top-6 right-6 z-audioPlayer");
 const playButtonStyles = cn(
   "bg-transparent cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-100"
 );
-const svgStyles = cn("drop-shadow-[var(--drop-shadow-overlay)] size-6");
+const svgStyles = cn("drop-shadow-overlay size-8");
 
 export const AudioPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);

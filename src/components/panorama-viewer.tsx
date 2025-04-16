@@ -68,7 +68,7 @@ export const PanoramaViewer: React.FC = () => {
   }, [isTransitioningRound, roundActive]);
 
   const containerStyles = cn(
-    "absolute top-0 left-0 right-0 bottom-0 z-[var(--z-panorama)] transition-filter duration-200 ease-linear",
+    "absolute top-0 left-0 right-0 bottom-0 z-panorama transition-filter duration-2000 ease-linear",
     roundActive ? "filter-none" : "grayscale-75 brightness-95"
   );
   const panoramaImageStyles =

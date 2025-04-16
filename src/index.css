@@ -47,6 +47,8 @@
 
   --drop-shadow-overlay: 0px 2px 3px rgba(0, 0, 0, 0.6),
     0px 4px 13px rgba(0, 0, 0, 0.1), 0px 8px 23px rgba(0, 0, 0, 0.1);
+
+  --button-height: 56px;
 }
 
 :root {
@@ -64,7 +66,7 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.23 0.0107 260.68);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.704 0.201 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -99,5 +101,47 @@
   }
   h3 {
     @apply text-lg font-medium;
+  }
+}
+
+@layer utilities {
+  /* animations */
+  @keyframes pulse-color {
+    from {
+      color: var(--color-primary);
+    }
+    to {
+      color: var(--destructive);
+    }
+  }
+
+  .animation-pulse-color {
+    animation: pulse-color 1s ease-in-out infinite alternate;
+  }
+
+  .animation-pulse-color-fast {
+    animation: pulse-color 0.5s ease-in-out infinite alternate;
+  }
+
+  /* text-shadow */
+  .text-shadow-overlay {
+    text-shadow: var(--drop-shadow-overlay);
+  }
+
+  /* z-indices */
+  .z-panorama {
+    z-index: var(--z-panorama);
+  }
+
+  .z-map {
+    z-index: var(--z-map);
+  }
+
+  .z-overlay {
+    z-index: var(--z-overlay);
+  }
+
+  .z-audioPlayer {
+    z-index: var(--z-audioPlayer);
   }
 }

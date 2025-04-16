@@ -12,7 +12,7 @@ type Props = {
 const TRANSITION_DURATION = 2000;
 
 const containerStyles = cn(
-  `bg-secondary absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-start z-[var(--z-overlay)] p-4 overflow-y-auto opacity-100 transition-opacity duration-${TRANSITION_DURATION} ease-in`
+  `bg-secondary absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-start z-overlay p-4 overflow-y-auto opacity-100 transition-opacity duration-${TRANSITION_DURATION} ease-in`
 );
 
 const contentContainerStyles = cn(
