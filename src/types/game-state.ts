@@ -16,7 +16,7 @@ export type LocationConfig = {
   panCorrection: number;
 }
 
-export interface GameStateType {
+export interface GameState {
   // Game state
   allLocations: LocationConfig[];
   currentRound: number;
@@ -35,35 +35,4 @@ export interface GameStateType {
   firstRoundReady: boolean;
   nextRoundReady: boolean;
   isTransitioningRound: boolean;
-
-  // Computed values
-  // disableMapButton: boolean;
-  // disableMapMarker: boolean;
-  // showAnswer: boolean;
-
-  // Time state
-  // timeLeft: number;
 }
-
-export interface GameStateContextType extends GameStateType {
-  // Handlers
-  resetTimer: () => void;
-  handleRoundEnd: (timerExpired?: boolean) => void;
-  handleStartGame: () => void;
-  handleGameEnd: () => void;
-  handleSetGuessLocation: (location: LatLngTuple) => void;
-  handleCurrentPanoramicImgReady: () => void;
-  handleNextPanoramicImgReady: () => void;
-  handleTransitionToNextRound: () => void;
-  handleStartRound: () => void;
-  handleMapButtonClick: () => void;
-  handlePanoramaTransitionEnd: () => void;
-
-  // Computed values
-  disableMapButton: boolean;
-  disableMapMarker: boolean;
-  showAnswer: boolean;
-
-  // Time state
-  timeLeft: number;
-} 

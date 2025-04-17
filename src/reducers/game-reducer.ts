@@ -1,5 +1,5 @@
 import { LatLngTuple } from "leaflet";
-import { GameStateType as GameState } from "../types";
+import { GameState } from "../types";
 
 export type GameAction =
     | { type: "START_GAME", payload?: never }

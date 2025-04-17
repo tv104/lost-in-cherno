@@ -1,5 +1,5 @@
 import { LatLngTuple } from "leaflet";
-import { GameStateType as GameState, GamePhase } from "../types";
+import { GameState, GamePhase } from "../types";
 import { gameReducer } from "./game-reducer";
 
 describe("gameReducer", () => {

@@ -1,4 +1,4 @@
-import { GameConfig, GameStateType as GameState } from "../types";
+import { GameConfig, GameState } from "../types";
 import { useReducer } from "react";
 import { getNewGameLocations } from "../utils";
 import { GameAction, gameReducer } from "../reducers/game-reducer";

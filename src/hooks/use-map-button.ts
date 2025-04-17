@@ -1,11 +1,11 @@
 import { Dispatch, useCallback, useEffect, useMemo, useState } from "react";
-import { GameStateType } from "../types";
+import { GameState } from "../types";
 import { GameAction } from "../reducers/game-reducer";
 import { getNewGameLocations } from "../utils";
 import { calculateDistance } from "../utils";
 
 type Props = {
-    state: GameStateType,
+    state: GameState,
     timeLeft: number,
     showAnswer: boolean,
     resetTimer: () => void,

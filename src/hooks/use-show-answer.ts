@@ -1,7 +1,7 @@
-import { GameStateType } from "../types";
+import { GameState } from "../types";
 
 type Props = {
-    state: GameStateType,
+    state: GameState,
 }
 
 export const useShowAnswer = ({ state }: Props): boolean => {
