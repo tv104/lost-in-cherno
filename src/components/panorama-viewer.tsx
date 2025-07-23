@@ -34,6 +34,7 @@ export const PanoramaViewer: React.FC = () => {
         },
       ],
     ],
+    defaultZoomLvl: 0,
   };
 
   const containerRef = useRef<HTMLDivElement>(null);
